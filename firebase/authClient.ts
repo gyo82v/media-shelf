@@ -99,7 +99,46 @@ export async function createUserProfileIfNotExists(user:FirebaseUser, name:strin
     const snap = await getDoc(ref)
     if(!snap.exists()){
         const profile:UserProfile = {
-            name: name
+            uid: user.uid,
+            email: user.email,
+            createdAt: serverTimestamp(),
+            displayName: name,
+            jadeLilyCredit: 0,
+            jadeLilyTotalOrders: 0,
+            jadeLilyCart: [],
+            jadeLilyPastOrders: [],
+            jadeLilyCreditUsed: 0,
+            mediaShelf: {
+                settings: {
+                    darkmode: false,
+                    language: "en"
+                }
+            },
+            nextillApp: {
+                settings: {
+                    darkmode: false,
+                    language: "en",
+                    dayActive: false,
+                    dayDate: null,
+                    currency: "USD",
+                    balanceEnabled: false,
+                    ticketEnabled: false,
+                    receiptEnabled: false,
+                    disableMotion: false,
+                    soundEnabled: false,
+                    discountEnabled: false,
+                    paymentMethodSelectionEnabled: false
+                },
+                dayCycle: {
+                    active: false,
+                    startedAt: null,
+                    endedAt: null,
+                    openingBalance: null,
+                    closingBalance: null,
+                    dayKey: null,
+                    nextTicketNumber: 0
+                }
+            }
         }
         await setDoc(ref, profile)
         return profile
