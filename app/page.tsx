@@ -1,4 +1,23 @@
+import {useEffect} from 'react';
+import {useRouter} from 'next/navigation';
+import {useAuth} from '@/firebase/authProvider';
+
+
 export default function Home() {
+  const {user, loading} = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if(loading) return
+
+    if(user){
+      router.replace("")
+    }else{
+      router.replace("")
+    }
+  }, [user, loading, router])
+
+
   return (
     <div >
       <h1 >media shelf app</h1>
