@@ -2,7 +2,7 @@
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {useAuth} from '@/firebase/authProvider';
+import {useAuth} from "@/providers/AuthProvider";
 
 
 export default function Home() {
@@ -13,9 +13,9 @@ export default function Home() {
     if(loading) return
 
     if(user){
-      router.replace("")
+      router.replace("/home")
     }else{
-      router.replace("")
+      router.replace("/sign-in")
     }
   }, [user, loading, router])
 

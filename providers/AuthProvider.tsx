@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
 import { createContext, useEffect, useState, useContext } from "react"
 import { useLanguageSync } from "@/hooks/useLanguageSync";
 import type { User as FirebaseUser } from "firebase/auth"
-import type {AuthContextValue} from "@/types/firebase"
+import type {AuthContextValue} from "@/types"
 import type { UserProfile } from "@/types"
 import {
         onAuthStateChangedListener,
@@ -13,7 +13,7 @@ import {
         createUser as createFbUser, 
         getIdToken, 
         deleteAccountWithPassword
-    } from "./authClient"
+    } from "@/firebase/authClient"
 import { useTheme } from "next-themes";
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
