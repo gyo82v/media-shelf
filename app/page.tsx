@@ -1,3 +1,5 @@
+"use client"
+
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {useAuth} from '@/firebase/authProvider';
@@ -17,10 +19,5 @@ export default function Home() {
     }
   }, [user, loading, router])
 
-
-  return (
-    <div >
-      <h1 >media shelf app</h1>
-    </div>
-  );
+  return null
 }
