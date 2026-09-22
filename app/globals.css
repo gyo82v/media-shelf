@@ -1,26 +1,198 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    --background: theme(colors.slate.100);
+    --foreground: theme(colors.slate.800);
+
+    --surface: theme(colors.white);
+    --surface-2: theme(colors.slate.200);
+    --border: theme(colors.slate.200);
+
+    --primary: theme(colors.teal.600);
+    --primary-hover: theme(colors.teal.700);
+    --primary-foreground: theme(colors.white);
+
+    --muted: theme(colors.slate.600);
+    --muted-foreground: theme(colors.slate.500);
+    --divider: theme(colors.slate.300);
+  }
+
+  .dark {
+    --background: theme(colors.slate.800);
+    --foreground: theme(colors.slate.100);
+
+    --surface: theme(colors.slate.700);
+    --surface-2: theme(colors.slate.600);
+    --border: theme(colors.slate.500);
+
+    --primary: theme(colors.teal.400);
+    --primary-hover: theme(colors.teal.300);
+    --primary-foreground: theme(colors.slate.950);
+
+    --muted: theme(colors.slate.400);
+    --muted-foreground: theme(colors.slate.300);
+    --divider: theme(colors.slate.500);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 2️⃣ Explicit user override */
+.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
 }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    @apply m-0 p-0 ;
+    line-height: 1.5;
+    font-weight: 400;
+
+    /* MOBILE-FIRST: visually hide scrollbars (keep scrolling functional) */
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE/Edge */
+  }
+
+  html, body {
+    @apply bg-[var(--background)] text-[var(--foreground)];
+  }
+
+  /* WebKit browsers (Chrome, Safari) — hide on mobile by disabling the pseudo element */
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Keep defaults for images/buttons */
+  img {
+    @apply max-w-full h-auto;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+}
+
+@layer utilities {
+  /* utility to hide scrollbar on any element (mobile-first) */
+  .scrollbar-hide {
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE/Edge */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;                /* WebKit */
+  }
+
+  /* utility to hide scrollbar (alternate name) */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+  .text-primary {
+    color: var(--primary);
+  }
+  .text-muted {
+    color: var(--muted);
+  }
+  .text-muted-foreground {
+    color: var(--muted-foreground);
+  }
+
+  /* Surfaces */
+  .bg-surface-1 {
+    background-color: var(--surface);
+  }
+
+  .bg-surface-2 {
+    background-color: var(--surface-2);
+  }
+
+  /* Borders */
+  .border-default {
+    border-color: var(--border);
+  }
+
+  .hover-primary:hover {
+    background-color: var(--primary-hover);
+    color: var(--primary-foreground);
+  }
+
+  .hover-surface-1:hover {
+    background-color: var(--surface);
+  }
+
+  .hover-surface-2:hover {
+    background-color: var(--surface-2);  
+  }
+}
+
+@media (min-width: 1024px) {
+  html, body {
+    /* allow the browser to render normal scrollbars again */
+    scrollbar-width: auto;        /* Firefox */
+    -ms-overflow-style: auto;     /* IE/Edge */
+
+    /* Reserve gutter to avoid layout shift when scrollbar appears (where supported) */
+    scrollbar-gutter: stable;
+  }
+
+  /* WebKit scrollbar sizing */
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: block;    /* re-enable */
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Track (behind the thumb) */
+  html::-webkit-scrollbar-track,
+  body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Thumb (the draggable piece) */
+  html::-webkit-scrollbar-thumb,
+  body::-webkit-scrollbar-thumb {
+    background-color: rgba(107, 70, 61, 0.35); /* subtle brown/orange tint matching theme */
+    border-radius: 9999px;
+    border: 3px solid rgba(0,0,0,0); /* create padding so thumb doesn't touch track */
+    background-clip: padding-box;
+  }
+
+  /* Hover state for thumb for better affordance */
+  html::-webkit-scrollbar-thumb:hover,
+  body::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(107, 70, 61, 0.55);
+  }
+
+  /* Firefox: set thumb color & track */
+  /* 'scrollbar-color: thumbColor trackColor' */
+  html, body {
+    scrollbar-color: rgba(107, 70, 61, 0.35) transparent;
+  }
+}
+
+
