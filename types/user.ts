@@ -40,3 +40,32 @@ export interface UserProfile {
         }
     }
 }
+
+export interface MediaItem {
+    id: string
+    name: string
+    type: "movie" | "book" | "game" | "tvShow"
+    status: "completed" | "inProgress" | "wishList"
+
+    createdAt: unknown
+    updatedAt: unknown
+    startedAt: unknown | null
+    finishedAt: unknown | null
+
+    description: string
+    genre: string
+    reviewProfile: string
+    image: string
+
+    starRating: number | null
+    notes: string
+
+    reviewScore: {
+        criteria: Record<string, number>
+    }
+
+    seasons?: {
+        number: number
+        starRating: number | null
+    }[]
+}
