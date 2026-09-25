@@ -52,7 +52,7 @@ export interface MediaItem {
     startedAt: unknown | null
     finishedAt: unknown | null
 
-    description: string
+    description?: string
     genre: string
     reviewProfile: string
     image: string
@@ -60,9 +60,9 @@ export interface MediaItem {
     year?: number
 
     starRating: number | null
-    notes: string
+    notes?: string
 
-    reviewScore: {
+    reviewScore?: {
         criteria: Record<string, number>
     }
 

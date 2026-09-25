@@ -2,14 +2,17 @@
 
 import {useAuth} from "@/providers/AuthProvider";
 import {useState} from "react";
+import WishListForm from "@/components/modals/WishListForm";
 
 export default function HomePage() {
     const {profile} = useAuth();
-    const [showModale, setShowModale] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const handleAddToWishList = () => {
-        setShowModale(true);
+        setShowModal(true);
     }
+
+
     return(
         <div>
             <h1>{profile?.displayName} dashboard</h1>
@@ -48,6 +51,7 @@ export default function HomePage() {
                 <p>Games:</p>
                 <p>Books:</p>
             </div>
+            {showModal && <WishListForm setShowModal={setShowModal} />}
         </div>
     )
 }
