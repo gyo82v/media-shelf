@@ -1,14 +1,20 @@
 "use client"
 
 import {useAuth} from "@/providers/AuthProvider";
+import {useState} from "react";
 
 export default function HomePage() {
     const {profile} = useAuth();
+    const [showModale, setShowModale] = useState(false);
+
+    const handleAddToWishList = () => {
+        setShowModale(true);
+    }
     return(
         <div>
             <h1>{profile?.displayName} dashboard</h1>
             <div>
-                <button>
+                <button onClick={handleAddToWishList}>
                     Add to wishlist
                 </button>
                 <button>

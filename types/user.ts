@@ -56,6 +56,8 @@ export interface MediaItem {
     genre: string
     reviewProfile: string
     image: string
+    country?: string
+    year?: number
 
     starRating: number | null
     notes: string
@@ -67,5 +69,8 @@ export interface MediaItem {
     seasons?: {
         number: number
         starRating: number | null
+        reviewScore?: {
+            criteria: Record<string, number>
+        }
     }[]
 }
