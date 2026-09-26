@@ -4,14 +4,12 @@ import {useAuth} from "@/providers/AuthProvider"
 export default function WishListForm({ setShowModal }: { setShowModal: (value: boolean) => void }) {
    
     const {profile} = useAuth()
-    console.log("profile:", profile)
 
     const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
         const name = formData.get("title")?.toString() ?? ""
         const type = formData.get("type")?.toString() as "movie" | "book" | "tvShow" | "game"
-        const status = formData.get("status")?.toString() as "inProgress" | "wishList"
         const genre = formData.get("genre")?.toString() ?? ""
         const reviewProfile = formData.get("reviewProfile")?.toString() ?? ""
         const country = formData.get("country")?.toString() ?? ""
@@ -22,7 +20,7 @@ export default function WishListForm({ setShowModal }: { setShowModal: (value: b
         if(!profile) throw new Error("no profile found")
 
         try{
-            await addMedia(profile.uid, {name, type, status, genre, reviewProfile, country, year, description, notes})
+            await addMedia(profile.uid, {name, type, status:"wishList", genre, reviewProfile, country, year, description, notes})
             setShowModal(false)
         }catch(err){
             console.error("failed to add media to the wishlist:", err)
@@ -44,13 +42,6 @@ export default function WishListForm({ setShowModal }: { setShowModal: (value: b
                         <option value="tvShow">TV Show</option>
                         <option value="game">Game</option>
                         <option value="book">Book</option>
-                    </select>
-                </div>
-                <div>
-                    <label htmlFor="status">Status</label>
-                    <select id="status" name="status" className={``} required>
-                        <option value="wishList">WishList</option>
-                        <option value="inProgress">In Progress</option>
                     </select>
                 </div>
                 <div>
