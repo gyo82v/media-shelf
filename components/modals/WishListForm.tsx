@@ -1,30 +1,32 @@
-import { addMediaToWishlist } from "@/firebase/profile"
-import { error } from "console"
+import { addMedia } from "@/firebase/profile"
+import {useAuth} from "@/providers/AuthProvider"
 
 export default function WishListForm({ setShowModal }: { setShowModal: (value: boolean) => void }) {
    
+    const {profile} = useAuth()
+    console.log("profile:", profile)
+
     const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
-        const name = formData.get("title")
-        const type = formData.get("type")
-        const status = formData.get("status")
-        const genre = formData.get("genre")
-        const reviewProfile = formData.get("reviewProfile")
-        const country = formData.get("country")
-        const year = formData.get("year")
-        const description = formData.get("description")
-        const notes = formData.get("notes")
+        const name = formData.get("title")?.toString() ?? ""
+        const type = formData.get("type")?.toString() as "movie" | "book" | "tvShow" | "game"
+        const status = formData.get("status")?.toString() as "inProgress" | "wishList"
+        const genre = formData.get("genre")?.toString() ?? ""
+        const reviewProfile = formData.get("reviewProfile")?.toString() ?? ""
+        const country = formData.get("country")?.toString() ?? ""
+        const year = formData.get("year")?.toString() ?? ""
+        const description = formData.get("description")?.toString() ?? ""
+        const notes = formData.get("notes")?.toString() ?? ""
+        
+        if(!profile) throw new Error("no profile found")
 
         try{
-            await addMediaToWishlist()
+            await addMedia(profile.uid, {name, type, status, genre, reviewProfile, country, year, description, notes})
+            setShowModal(false)
         }catch(err){
             console.error("failed to add media to the wishlist:", err)
         }
-
-
-
-
     }
 
     return(
