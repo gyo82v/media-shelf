@@ -1,5 +1,6 @@
 import { addMedia } from "@/firebase/profile"
 import {useAuth} from "@/providers/AuthProvider"
+import Modal from "./Modal"
 
 export default function WishListForm({ setShowModal }: { setShowModal: (value: boolean) => void }) {
    
@@ -28,7 +29,7 @@ export default function WishListForm({ setShowModal }: { setShowModal: (value: b
     }
 
     return(
-        <div className={`flex flex-col items-center justify-center fixed inset-0 `}>
+        <Modal>
             <h3 className="text-lg font-bold">Add to WishList</h3>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <div>
@@ -80,6 +81,6 @@ export default function WishListForm({ setShowModal }: { setShowModal: (value: b
                     </button>
                 </div>
             </form>
-        </div>
+        </Modal>
     )
 }
