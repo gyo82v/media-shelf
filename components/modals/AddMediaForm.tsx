@@ -25,6 +25,7 @@ export default function AddMediaForm({status, setShowModal}:Props){
 
         try{
             await addMedia(profile.uid, {name, type, status:status, genre, reviewProfile, country, year, description, notes})
+            setShowModal(false)
 
         }catch(err){
             console.error("failed to  save the media:", err)
