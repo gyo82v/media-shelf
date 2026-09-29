@@ -1,5 +1,6 @@
 import {useAuth} from "@/providers/AuthProvider"
 import {addMedia} from "@/firebase/profile" 
+import Button from "../ui/Button"
 
 type Props = {
     status: "inProgress" | "wishList"
@@ -77,10 +78,10 @@ export default function AddMediaForm({status, setShowModal}:Props){
             </div>
           </div>
           <div className={`flex gap-4`}>
-            <button type="submit">Add</button>
-            <button type="button" onClick={() => setShowModal(false)}>
+            <Button type="submit">Add</Button>
+            <Button onClick={() => setShowModal(false)} variant="secondary">
               Cancel
-            </button>
+            </Button>
           </div>
         </form>
     )

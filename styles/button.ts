@@ -1,0 +1,65 @@
+import { transitions, activePress, hoverPrimary, hoverDanger } from "./patterns"
+import { focusRing } from "./focus"
+
+export const buttonBaseStyle = `
+  inline-flex items-center justify-center gap-1
+  rounded-2xl px-4 py-3 text-sm font-medium outline-none
+  disabled:pointer-events-none disabled:opacity-50
+  ${transitions} ${activePress} ${focusRing}
+`
+
+export const iconsBtn = `
+  inline-flex h-11 w-11 items-center justify-center rounded-xl
+  bg-surface-2 text-muted border border-default shadow-sm hover-surface-1
+  ${focusRing} ${transitions} ${activePress}`
+
+/* ======================================================
+   Primary button (main actions, form submit)
+====================================================== */
+export const buttonPrimaryStyle = `
+  ${buttonBaseStyle}
+  bg-[var(--primary)] text-[var(--primary-foreground)]
+  ${hoverPrimary}
+`;
+
+/* ======================================================
+   Primary Danger button (main danger actions)
+====================================================== */
+export const buttonPrimaryDangerStyle = `
+  ${buttonBaseStyle}
+  bg-[var(--primary)] text-[var(--primary-foreground)]
+  ${hoverDanger}
+`;
+
+/* ======================================================
+   Secondary button (less prominent actions)
+====================================================== */
+export const buttonSecondaryStyle = `
+  ${buttonBaseStyle}
+  border border-default bg-surface-2 text-[var(--foreground)]
+  hover:bg-slate-300 dark:hover:bg-slate-700
+`;
+
+
+export const buttonConfirmStyle = `
+  ${buttonBaseStyle}
+  border border-default bg-surface-2 text-[var(--foreground)]
+  hover:bg-teal-500 dark:hover:bg-teal-400 hover:text-white
+`;
+
+/* ======================================================
+   Danger button (delete, destructive actions)
+====================================================== */
+export const buttonDangerStyle = `
+  ${buttonBaseStyle}
+  border border-default bg-surface-2 text-[var(--foreground)]
+  ${hoverDanger}
+`;
+
+/* ======================================================
+   Size variants
+====================================================== */
+
+export const buttonIconStyle = `
+  p-2 rounded-xl
+`;

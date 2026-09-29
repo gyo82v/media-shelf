@@ -3,6 +3,7 @@
 import {useAuth} from "@/providers/AuthProvider";
 import {useState} from "react";
 import AddMediaModal from "@/components/modals/AddMediaModal";
+import Button from "@/components/ui/Button";
 
 export default function HomePage() {
     const {profile} = useAuth();
@@ -22,14 +23,14 @@ export default function HomePage() {
         <div>
             <h1>{profile?.displayName} dashboard</h1>
             <div>
-                <button onClick={() => handleAddMedia("wishList")}>
+                <Button onClick={() => handleAddMedia("wishList")}>
                     Add to wishlist
-                </button>
+                </Button>
+                <Button onClick={() => handleAddMedia("inProgress")}>
+                    Add to in progress
+                </Button>
                 <button>
                     Add review
-                </button>
-                <button onClick={() => handleAddMedia("inProgress")}>
-                    Add to in progress
                 </button>
             </div>
             <div>
