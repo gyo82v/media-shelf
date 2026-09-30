@@ -1,6 +1,8 @@
 import {useAuth} from "@/providers/AuthProvider"
 import {addMedia} from "@/firebase/profile" 
 import Button from "../ui/Button"
+import Formfield from "../ui/form/FormField"
+import FormTextArea from "../ui/form/FormTextArea"
 
 type Props = {
     status: "inProgress" | "wishList"
@@ -22,7 +24,7 @@ export default function AddMediaForm({status, setShowModal}:Props){
         const description = formData.get("description")?.toString() ?? ""
         const notes = formData.get("notes")?.toString() ?? ""
 
-        const year = Number(yearString)
+        const year = yearString ? Number(yearString) : null
 
         if(!profile) throw new Error("No profile found")
 
@@ -37,10 +39,9 @@ export default function AddMediaForm({status, setShowModal}:Props){
 
     return(
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="title">Title</label>
-            <input type="text" id="title" name="title" className={``} required  />
-          </div>
+          <Formfield name="title" label="Title" />
+          <Formfield name="genre" label="Genre" />
+          <Formfield name="reviewProfile" label="Review Tag" />
           <div>
             <label htmlFor="type">Type</label>
             <select id="type" name="type" className={``} required>
@@ -51,32 +52,12 @@ export default function AddMediaForm({status, setShowModal}:Props){
              </select>
           </div>
           <div>
-            <label htmlFor="genre">Genre</label>
-            <input type="text" id="genre" name="genre" className={``} required />
-          </div>
-          <div>
-            <label htmlFor="reviewProfile">Review profile</label>
-            <input id="reviewProfile" name="reviewProfile" className={``} required />
-          </div>
-          <div>
-            <p className=" font-extralight uppercase">Optional informations</p>
+            <p className="font-extralight uppercase">Optional informations</p>
             <div className="flex flex-col gap-3">
-              <div>
-                <label htmlFor="country">Country</label>
-                <input type="text" id="country" name="country" className={``} />
-              </div>
-              <div>
-                <label htmlFor="year">Year</label>
-                <input type="number" id="year" name="year" className={``} />
-              </div>
-              <div>
-                <label>Description</label>
-                <textarea id="description" name="description" className={``} placeholder="Enter a brief description..." />
-              </div>
-              <div>
-                <label>Additional notes</label>
-                <textarea id="notes" name="notes" className={``} placeholder="Add any additional notes..." />
-              </div>
+              <Formfield name="country" label="Country" required={false} />
+              <Formfield name="year" label="Release Year" required={false} type="number" />
+              <FormTextArea name="description" label="Description" placeholder="Enter a brief description..." />
+              <FormTextArea name="notes"  label="Additional notes" placeholder="Add any additional notes..."  />
             </div>
           </div>
           <div className={`flex gap-4`}>
@@ -88,3 +69,4 @@ export default function AddMediaForm({status, setShowModal}:Props){
         </form>
     )
 }
+
