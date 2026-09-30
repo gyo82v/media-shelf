@@ -1,7 +1,7 @@
 "use client";
 
 import { modalPanel } from "@/styles";
-import { useSelect } from "./Select.root";
+import { useSelect } from "./Select-root";
 
 type SelectContentProps = {
   children: React.ReactNode;

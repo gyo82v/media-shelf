@@ -1,7 +1,7 @@
-import SelectRoot, { useSelect } from "./Select.root";
+import SelectRoot, { useSelect } from "./Select-root";
 import SelectTrigger from "./Select-trigger";
 import SelectContent from "./Select-content";
-import SelectItem from "./select.item";
+import SelectItem from "./select-item";
 
 export const Select = {
   Root: SelectRoot,

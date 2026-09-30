@@ -2,8 +2,13 @@
 
 import { forwardRef } from "react";
 import { HiCheck } from "react-icons/hi2";
-import { activePress, transitions, overlay, focusRing } from "@/styles";
-import { useSelect } from "./Select.root";
+import {
+  activePress,
+  transitions,
+  overlay,
+  focusRing,
+} from "@/styles";
+import { useSelect } from "./Select-root";
 
 type SelectItemProps = {
   value: string;
@@ -13,7 +18,13 @@ type SelectItemProps = {
 
 const SelectItem = forwardRef<HTMLButtonElement, SelectItemProps>(
   function SelectItem({ value, children, className }, ref) {
-    const { value: selectedValue, onValueChange, closeMenu, triggerRef } = useSelect();
+    const {
+      value: selectedValue,
+      onValueChange,
+      closeMenu,
+      triggerRef,
+    } = useSelect();
+
     const selected = selectedValue === value;
 
     function handleSelect() {
@@ -41,7 +52,9 @@ const SelectItem = forwardRef<HTMLButtonElement, SelectItemProps>(
 
         <HiCheck
           aria-hidden="true"
-          className={`h-4 w-4 shrink-0 text-primary ${overlay} ${selected ? "opacity-100" : "opacity-0"}`}
+          className={`h-4 w-4 shrink-0 text-primary ${overlay} ${
+            selected ? "opacity-100" : "opacity-0"
+          }`}
         />
       </button>
     );
@@ -51,3 +64,4 @@ const SelectItem = forwardRef<HTMLButtonElement, SelectItemProps>(
 SelectItem.displayName = "SelectItem";
 
 export default SelectItem;
+

@@ -22,9 +22,9 @@ type SelectContextValue = {
   disabled?: boolean;
 };
 
-type SelectRootProps<T extends string = string> = {
-  value: T;
-  onValueChange: (value: T) => void;
+type SelectRootProps = {
+  name?: string;
+  required?: boolean;
   children: React.ReactNode;
   disabled?: boolean;
   className?: string;
@@ -42,16 +42,17 @@ export function useSelect() {
   return context;
 }
 
-
-export default function SelectRoot<T extends string>({
-  value,
-  onValueChange,
+export default function SelectRoot({
+  name,
+  required = false,
   children,
   disabled = false,
   className,
-}: SelectRootProps<T>) {
+}: SelectRootProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
 
   const closeMenu = useCallback(() => {
@@ -67,6 +68,10 @@ export default function SelectRoot<T extends string>({
     if (open) closeMenu();
     else openMenu();
   }, [open, closeMenu, openMenu]);
+
+  const onValueChange = useCallback((newValue: string) => {
+    setValue(newValue);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -99,7 +104,7 @@ export default function SelectRoot<T extends string>({
   const contextValue = useMemo<SelectContextValue>(
     () => ({
       value,
-      onValueChange: onValueChange as (value: string) => void,
+      onValueChange,
       open,
       setOpen,
       openMenu,
@@ -114,7 +119,20 @@ export default function SelectRoot<T extends string>({
 
   return (
     <SelectContext.Provider value={contextValue}>
-      <div ref={wrapperRef} className={`relative inline-flex ${className ?? ""}`}>
+      <div
+        ref={wrapperRef}
+        className={`relative inline-flex ${className ?? ""}`}
+      >
+        {name && (
+          <input
+            type="hidden"
+            name={name}
+            value={value}
+            disabled={disabled}
+            required={required}
+          />
+        )}
+
         {children}
       </div>
     </SelectContext.Provider>

@@ -3,9 +3,10 @@
 import { forwardRef } from "react";
 import { HiChevronDown } from "react-icons/hi2";
 import { activePress, toggleButton, inputBaseStyle } from "@/styles";
-import { useSelect } from "./Select.root";
+import { useSelect } from "./Select-root";
 
 type SelectTriggerProps = {
+  id?: string;
   placeholder?: string;
   label?: string;
   className?: string;
@@ -13,13 +14,18 @@ type SelectTriggerProps = {
 };
 
 const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  function SelectTrigger({ placeholder = "Select option", label, className, children }, ref) {
+  function SelectTrigger(
+    { id, placeholder = "Select option", label, className, children },
+    ref
+  ) {
     const { value, open, toggleMenu, triggerRef, disabled } = useSelect();
 
     return (
       <button
+        id={id}
         ref={(node) => {
           triggerRef.current = node;
+
           if (typeof ref === "function") ref(node);
           else if (ref) ref.current = node;
         }}
@@ -29,8 +35,8 @@ const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
         aria-haspopup="listbox"
         aria-expanded={open}
         className={`
-          inline-flex items-center justify-between px-4 
-          ${inputBaseStyle} ${activePress} 
+          inline-flex items-center justify-between px-4
+          ${inputBaseStyle} ${activePress}
           ${className ?? ""}
         `}
       >
@@ -50,3 +56,4 @@ const SelectTrigger = forwardRef<HTMLButtonElement, SelectTriggerProps>(
 );
 
 export default SelectTrigger;
+

@@ -3,6 +3,7 @@ import {addMedia} from "@/firebase/profile"
 import Button from "../ui/Button"
 import Formfield from "../ui/form/FormField"
 import FormTextArea from "../ui/form/FormTextArea"
+import FormSelect from "../ui/form/FormSelect"
 
 type Props = {
     status: "inProgress" | "wishList"
@@ -42,15 +43,13 @@ export default function AddMediaForm({status, setShowModal}:Props){
           <Formfield name="title" label="Title" />
           <Formfield name="genre" label="Genre" />
           <Formfield name="reviewProfile" label="Review Tag" />
-          <div>
-            <label htmlFor="type">Type</label>
-            <select id="type" name="type" className={``} required>
-              <option value="movie">Movie</option>
-              <option value="tvShow">TV Show</option>
-              <option value="game">Game</option>
-              <option value="book">Book</option>
-             </select>
-          </div>
+          <FormSelect 
+            name="type" 
+            label="Type" 
+            placeholder="Select type" 
+            options={[{ value: "movie", label: "Movie" },{ value: "tvShow", label: "TV Show" },
+                      { value: "game", label: "Game" },{ value: "book", label: "Book" },]} 
+          />
           <div>
             <p className="font-extralight uppercase">Optional informations</p>
             <div className="flex flex-col gap-3">
