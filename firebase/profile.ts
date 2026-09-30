@@ -10,7 +10,7 @@ export async function addMedia(
         genre: string;
         reviewProfile: string;
         country?: string;
-        year?: string;
+        year?: number;
         description?: string;
         notes?: string;
     }

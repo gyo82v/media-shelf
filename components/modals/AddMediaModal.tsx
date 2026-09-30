@@ -9,7 +9,7 @@ type Props = {
 export default function AddMediaModal({status, setShowModal}:Props){
     return(
         <Modal>
-            <h2>Add to {status}</h2>
+            <h2 className="text-lg font-bold">Add to {status}</h2>
             <AddMediaForm status={status} setShowModal={setShowModal} />
         </Modal>
     )

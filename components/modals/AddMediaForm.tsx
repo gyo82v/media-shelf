@@ -18,9 +18,11 @@ export default function AddMediaForm({status, setShowModal}:Props){
         const genre = formData.get("genre")?.toString() ?? ""
         const reviewProfile = formData.get("reviewProfile")?.toString() ?? ""
         const country = formData.get("country")?.toString() ?? ""
-        const year = formData.get("year")?.toString() ?? ""
+        const yearString = formData.get("year") ?? ""
         const description = formData.get("description")?.toString() ?? ""
         const notes = formData.get("notes")?.toString() ?? ""
+
+        const year = Number(yearString)
 
         if(!profile) throw new Error("No profile found")
 
