@@ -6,7 +6,7 @@ export async function addMedia(
     media: {
         name: string;
         type: "movie" | "book" | "game" | "tvShow";
-        status: "inProgress" | "wishList";
+        status: "inProgress" | "wishList" | "completed";
         genre: string;
         reviewProfile: string;
         country?: string;
