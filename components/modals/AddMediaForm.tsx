@@ -6,7 +6,7 @@ import FormTextArea from "../ui/form/FormTextArea"
 import FormSelect from "../ui/form/FormSelect"
 
 type Props = {
-    status: "inProgress" | "wishList"
+    status: "inProgress" | "wishList" | "completed"
     setShowModal: (value:boolean) => void
 }
 
