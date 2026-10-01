@@ -12,7 +12,7 @@ export default function Header(){
                 Media Shelf
             </div>
             {user && profile && <UserSection profile={profile} />}
-            {user && <Navbar navItems={["home", "media", "wishlist"]}/>}
+            {user && <Navbar navItems={["home", "media","in-progress","wishlist"]}/>}
         </header>
     )
 }
