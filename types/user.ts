@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface UserProfile {
     uid : string
     email : string | null
@@ -41,16 +43,16 @@ export interface UserProfile {
     }
 }
 
-export interface MediaItem {
+export interface MediaItemType {
     id: string
     name: string
     type: "movie" | "book" | "game" | "tvShow"
     status: "completed" | "inProgress" | "wishList"
 
-    createdAt: unknown
-    updatedAt: unknown
-    startedAt: unknown | null
-    finishedAt: unknown | null
+    createdAt: Timestamp
+    updatedAt: Timestamp
+    startedAt: Timestamp | null
+    finishedAt: Timestamp | null
 
     description?: string
     genre: string

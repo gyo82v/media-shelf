@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@/providers/AuthProvider"
 import { getMediaByStatus } from "@/firebase/media"
-import type { MediaItem } from "@/types"
+import type { MediaItemType } from "@/types"
 
 export default function WishlistPage() {
     const { profile } = useAuth()
-    const [wishList, setWishList] = useState<MediaItem[]>([])
+    const [wishList, setWishList] = useState<MediaItemType[]>([])
 
     useEffect(() => {
         if (!profile?.uid) return

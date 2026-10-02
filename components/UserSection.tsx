@@ -4,7 +4,6 @@ import {useAuth} from "@/providers/AuthProvider";
 import {useRouter} from "next/navigation";
 
 export default function UserSection({profile}: {profile: UserProfile}){
-    console.log("UserSection profile:", profile)
     const {signOut} = useAuth();
     const router = useRouter()
     const handleSignOut = async () => {

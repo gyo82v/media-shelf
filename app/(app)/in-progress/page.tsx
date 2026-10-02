@@ -3,12 +3,15 @@
 import {useAuth} from "@/providers/AuthProvider"
 import {getMediaByStatus} from "@/firebase/media"
 import {useEffect, useState} from "react"
-import type {MediaItem} from "@/types"
+import type {MediaItemType} from "@/types"
+import MediaItem from "@/components/MediaItem"
 
 
 export default function InProgressPage(){
     const {profile} = useAuth()
-    const [inProgressList, setInProgressList] = useState<MediaItem[]>([])
+    const [inProgressList, setInProgressList] = useState<MediaItemType[]>([])
+
+    console.log("list: ", inProgressList)
 
     useEffect(() => {
         if(!profile?.uid) return
@@ -25,9 +28,8 @@ export default function InProgressPage(){
     return(
         <div>
             <h1>In progress media</h1>
-
             <div>
-                {inProgressList.map(i => (<p key={i.id}>{i.name}</p>))}
+                {inProgressList.map(i => (<MediaItem key={i.id} item={i} />))}
             </div>
         </div>
     )

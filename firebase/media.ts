@@ -1,11 +1,11 @@
 import { collection, getDocs, query, where } from "firebase/firestore"
 import { db } from "./firebase"
-import type { MediaItem } from "@/types"
+import type { MediaItemType } from "@/types"
 
 export async function getMediaByStatus(
     uid: string,
-    status: MediaItem["status"]
-): Promise<MediaItem[]> {
+    status: MediaItemType["status"]
+): Promise<MediaItemType[]> {
 
     const mediaRef = collection(db, "users", uid, "media")
 
@@ -19,5 +19,5 @@ export async function getMediaByStatus(
     return snap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-    })) as MediaItem[]
+    })) as MediaItemType[]
 }
