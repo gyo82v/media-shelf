@@ -1,5 +1,6 @@
-import { addDoc, collection, serverTimestamp, doc } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
+import {createSlug} from "@/lib/createSlug"
 
 export async function addMedia(
     uid: string,
@@ -17,11 +18,13 @@ export async function addMedia(
 ) {
    
     const mediaRef = collection(db, "users", uid, "media");
+    const slug = `${createSlug(media.name)}-${media.type}`;
 
     const docRef = await addDoc(mediaRef, {
         name: media.name,
         type: media.type,
         status: media.status,
+        slug: slug,
 
         genre: media.genre,
         reviewProfile: media.reviewProfile,

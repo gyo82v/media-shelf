@@ -21,3 +21,29 @@ export async function getMediaByStatus(
         ...doc.data()
     })) as MediaItemType[]
 }
+
+export async function getMediaBySlug(
+    uid: string,
+    slug: string
+): Promise<MediaItemType | null> {
+
+    const mediaRef = collection(db, "users", uid, "media");
+
+    const q = query(
+        mediaRef,
+        where("slug", "==", slug)
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+        return null;
+    }
+
+    const doc = snap.docs[0];
+
+    return {
+        id: doc.id,
+        ...doc.data(),
+    } as MediaItemType;
+}
