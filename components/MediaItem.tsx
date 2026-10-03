@@ -6,7 +6,7 @@ import Link from "next/link"
 export default function MediaItem({ item }: { item: MediaItemType }) {
     return (
         <article>
-            <Link href={`/media/${item.id}`} className="flex gap-4 p-4">
+            <Link href={`/media/${item.slug}`} className="flex gap-4 p-4">
                 <div>
                     <p>image goes here</p>
                 </div>
