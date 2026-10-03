@@ -1,26 +1,37 @@
-export default async function MediaItemPage({
+"use client"
+
+import { getMediaBySlug } from "@/firebase/media";
+import { useAuth } from "@/providers/AuthProvider";
+import { useEffect, useState } from "react";
+import type { MediaItemType } from "@/types";
+
+export default function MediaItemPage({
     params,
 }: {
-    params: Promise<{ id: string }>
+    params: Promise<{ slug: string }>;
 }) {
-    const { id } = await params;
+    const [mediaItem, setMediaItem] = useState<MediaItemType | null>(null);
+    const { profile } = useAuth();
 
-    console.log(id);
+    useEffect(() => {
+        if (!profile?.uid) return;
 
-    return <div>Media ID: {id}</div>;
+        const loadMedia = async () => {
+            const { slug } = await params;
+
+            const item = await getMediaBySlug(profile.uid, slug);
+
+            console.log("item:", item);
+
+            setMediaItem(item);
+        };
+
+        loadMedia();
+    }, [profile?.uid, params]);
+
+    return (
+        <div>
+            <h1>{mediaItem?.name || "Media Item"}</h1>
+        </div>
+    );
 }
-
-/**
- using slug:
-
-
- export default async function MediaItemPage({
-    params,
-}: {
-    params: Promise<{ slug: string }>
-}) {
-    const { slug } = await params;
-
-    // get media using slug
-}
- */

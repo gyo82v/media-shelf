@@ -60,6 +60,7 @@ export interface MediaItemType {
     image: string
     country?: string
     year?: number
+    slug: string
 
     starRating: number | null
     notes?: string

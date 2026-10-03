@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/providers/AuthProvider"
 import { getMediaByStatus } from "@/firebase/media"
 import type { MediaItemType } from "@/types"
+import MediaItem from "@/components/MediaItem"
 
 export default function WishlistPage() {
     const { profile } = useAuth()
@@ -23,12 +24,8 @@ export default function WishlistPage() {
     return (
         <div className="flex flex-col gap-4 mt-10 p-4">
             <h1 className="text-xl font-bold">Wishlist</h1>
-
-            {wishList.map(item => (
-                <div key={item.id}>
-                    {item.name}
-                </div>
-            ))}
+            <div>
+                {wishList.map(i => <MediaItem key={i.id} item={i} />)}
+            </div>
         </div>
-    )
-}
+    )}
