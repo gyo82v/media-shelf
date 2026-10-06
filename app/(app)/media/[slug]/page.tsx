@@ -1,9 +1,16 @@
-"use client"
+"use client";
 
 import { getMediaBySlug } from "@/firebase/media";
 import { useAuth } from "@/providers/AuthProvider";
 import { useEffect, useState } from "react";
 import type { MediaItemType } from "@/types";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import {
+    FiArrowLeft,
+    FiEdit2,
+    FiTrash2,
+} from "react-icons/fi";
 
 export default function MediaItemPage({
     params,
@@ -12,6 +19,322 @@ export default function MediaItemPage({
 }) {
     const [mediaItem, setMediaItem] = useState<MediaItemType | null>(null);
     const { profile } = useAuth();
+    const router = useRouter();
+
+    const imageMap = {
+        movie: "/movie.png",
+        book: "/book.png",
+        game: "/game.png",
+        tvShow: "/tvshow.png",
+    };
+
+    const formatType = (type?: MediaItemType["type"]) => {
+        switch (type) {
+            case "movie":
+                return "Movie";
+            case "book":
+                return "Book";
+            case "game":
+                return "Game";
+            case "tvShow":
+                return "TV Show";
+            default:
+                return "N/A";
+        }
+    };
+
+    const formatStatus = (status?: MediaItemType["status"]) => {
+        switch (status) {
+            case "completed":
+                return "Completed";
+            case "inProgress":
+                return "In Progress";
+            case "wishList":
+                return "Wishlist";
+            default:
+                return "N/A";
+        }
+    };
+
+    const formatDate = (timestamp: MediaItemType["createdAt"] | null | undefined) => {
+        if (!timestamp) return "Not available";
+
+        return timestamp.toDate().toLocaleDateString(undefined, {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        });
+    };
+
+    useEffect(() => {
+        if (!profile?.uid) return;
+
+        const loadMedia = async () => {
+            const { slug } = await params;
+            const item = await getMediaBySlug(profile.uid, slug);
+
+            setMediaItem(item);
+        };
+
+        loadMedia();
+    }, [profile?.uid, params]);
+
+    const handleUpdate = () => {
+        console.log("Update item:", mediaItem?.id);
+    };
+
+    const handleDelete = () => {
+        console.log("Delete item:", mediaItem?.id);
+    };
+
+    return (
+        <main className="mx-auto w-full max-w-6xl p-4 md:p-6">
+
+            {/* Back button */}
+            <button
+                type="button"
+                onClick={() => router.back()}
+                className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-neutral-600 transition hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+            >
+                <FiArrowLeft size={18} />
+                Back
+            </button>
+
+            {/* Main item card */}
+            <article className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+
+                <div className="md:grid md:grid-cols-[320px_1fr]">
+
+                    {/* Image */}
+                    <div className="relative aspect-[3/2] w-full bg-neutral-100 md:aspect-auto md:min-h-full dark:bg-neutral-800">
+                        {mediaItem && (
+                            <Image
+                                src={imageMap[mediaItem.type]}
+                                alt={mediaItem.name}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 767px) 100vw, 320px"
+                            />
+                        )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-col p-5 md:p-7">
+
+                        {/* Title + badges */}
+                        <div className="mb-6">
+                            <div className="mb-3 flex flex-wrap items-center gap-2">
+                                {mediaItem && (
+                                    <>
+                                        <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                            {formatType(mediaItem.type)}
+                                        </span>
+
+                                        <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                            {formatStatus(mediaItem.status)}
+                                        </span>
+                                    </>
+                                )}
+                            </div>
+
+                            <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 md:text-3xl dark:text-white">
+                                {mediaItem?.name || "Media Item"}
+                            </h1>
+                        </div>
+
+                        {/* Metadata */}
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
+
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                    Genre
+                                </p>
+                                <p className="mt-1 text-sm text-neutral-900 dark:text-neutral-200">
+                                    {mediaItem?.genre || "Not specified"}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                    Review Profile
+                                </p>
+                                <p className="mt-1 text-sm text-neutral-900 dark:text-neutral-200">
+                                    {mediaItem?.reviewProfile || "Not specified"}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                    Country
+                                </p>
+                                <p className="mt-1 text-sm text-neutral-900 dark:text-neutral-200">
+                                    {mediaItem?.country || "Not specified"}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                    Release Year
+                                </p>
+                                <p className="mt-1 text-sm text-neutral-900 dark:text-neutral-200">
+                                    {mediaItem?.year || "Not specified"}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                    Added
+                                </p>
+                                <p className="mt-1 text-sm text-neutral-900 dark:text-neutral-200">
+                                    {formatDate(mediaItem?.createdAt)}
+                                </p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+                                    Completed
+                                </p>
+                                <p className="mt-1 text-sm text-neutral-900 dark:text-neutral-200">
+                                    {formatDate(mediaItem?.finishedAt)}
+                                </p>
+                            </div>
+
+                        </div>
+
+                        {/* Description */}
+                        <div className="mt-7 border-t border-neutral-200 pt-6 dark:border-neutral-800">
+                            <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-white">
+                                Description
+                            </h2>
+
+                            <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-400">
+                                {mediaItem?.description || "No description has been added yet."}
+                            </p>
+                        </div>
+
+                        {/* Notes */}
+                        <div className="mt-6">
+                            <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-white">
+                                Notes
+                            </h2>
+
+                            <p className="text-sm leading-6 text-neutral-600 dark:text-neutral-400">
+                                {mediaItem?.notes || "No notes have been added yet."}
+                            </p>
+                        </div>
+
+                        {/* Rating */}
+                        <div className="mt-6">
+                            <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-white">
+                                Rating
+                            </h2>
+
+                            {mediaItem?.starRating ? (
+                                <div className="text-lg tracking-wide">
+                                    {/* Replace this later with your star component */}
+                                    ★★★★★
+                                    <span className="ml-2 text-sm text-neutral-500">
+                                        {mediaItem.starRating}/10
+                                    </span>
+                                </div>
+                            ) : (
+                                <p className="text-sm text-neutral-500">
+                                    Not rated yet
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Review Score */}
+<div className="mt-6 ">
+    <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
+        Review Score
+    </h2>
+
+    {mediaItem?.reviewScore?.totalScore !== undefined ? (
+        <div className="mt-2 flex items-center gap-3">
+            ★★★★★
+
+            <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+                {mediaItem.reviewScore.totalScore}/10
+            </span>
+        </div>
+    ) : (
+        <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+            No review yet
+        </p>
+    )}
+</div>
+
+                        {/* Actions */}
+                        <div className="mt-8 flex flex-col gap-3 border-t border-neutral-200 pt-6 sm:flex-row dark:border-neutral-800">
+
+                            <button
+                                type="button"
+                                onClick={handleUpdate}
+                                className="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                            >
+                                <FiEdit2 size={16} />
+                                Update
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={handleDelete}
+                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700"
+                            >
+                                <FiTrash2 size={16} />
+                                Delete
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
+                {/* Review section */}
+                <details className="border-t border-neutral-200 dark:border-neutral-800">
+                    <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-50 md:px-7 dark:text-white dark:hover:bg-neutral-800/50">
+                        Review
+                    </summary>
+
+                    <div className="border-t border-neutral-200 px-5 py-5 dark:border-neutral-800 md:px-7">
+                        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                            No review has been added yet.
+                        </p>
+                    </div>
+                </details>
+
+            </article>
+        </main>
+    );
+}
+
+
+
+
+/*
+
+"use client"
+
+import { getMediaBySlug } from "@/firebase/media";
+import { useAuth } from "@/providers/AuthProvider";
+import { useEffect, useState } from "react";
+import type { MediaItemType } from "@/types";
+import Image from "next/image";
+
+export default function MediaItemPage({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}) {
+    const [mediaItem, setMediaItem] = useState<MediaItemType | null>(null);
+    const { profile } = useAuth();
+
+    const imageMap = {
+        "movie": "/movie.png",
+        "book": "/book.png",
+        "game": "/game.png",
+        "tvShow": "/tvshow.png"
+    }
 
     useEffect(() => {
         if (!profile?.uid) return;
@@ -30,8 +353,39 @@ export default function MediaItemPage({
     }, [profile?.uid, params]);
 
     return (
-        <div>
-            <h1>{mediaItem?.name || "Media Item"}</h1>
-        </div>
+        <article className="flex  gap-4 p-4">
+            <div>
+                {mediaItem && (
+                    <Image
+                        src={imageMap[mediaItem.type]}
+                        alt={mediaItem.name}
+                        width={600}
+                        height={400}
+                        className=""
+                    />
+                )}  
+            </div>
+            <div>
+                <h1>{mediaItem?.name || "Media Item"}</h1>
+                <p>Type: {mediaItem?.type}</p>
+                <p>Genre: {mediaItem?.genre}</p>
+                <p>Review profile: {mediaItem?.reviewProfile || "N/A"}</p>
+                <p>Status: {mediaItem?.status}</p>
+                <p>Added: {mediaItem?.createdAt.toDate().toDateString()}</p>
+                <p>Completed: {mediaItem?.finishedAt ? mediaItem.finishedAt.toDate().toDateString() : "N/A"}</p>
+                <p>Country: {mediaItem?.country || "N/A"}</p>
+                <p>Release Date: {mediaItem?.year || "N/A"}</p>
+                <p>Description: {mediaItem?.description || "N/A"}</p>
+                <p>Notes: {mediaItem?.notes || "N/A"}</p>
+                <p>Rating: {mediaItem?.starRating || "N/A"}</p>
+                <p>Review: {"review content if exists othervise placeholder"}</p>
+            </div>
+        </article>
     );
 }
+
+
+
+
+
+*/
