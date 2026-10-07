@@ -67,6 +67,7 @@ export interface MediaItemType {
 
     reviewScore?: {
         criteria: Record<string, number>
+        totalScore?: number
     }
 
     seasons?: {
