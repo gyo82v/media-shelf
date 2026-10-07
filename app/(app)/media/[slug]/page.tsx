@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import {FiArrowLeft, FiEdit2, FiTrash2} from "react-icons/fi";
 import { formatType, formatStatus } from "@/lib/media";
 import { formatDate } from "@/lib/formatDate";
+import { imageMap } from "@/data/imageMap";
 
 export default function MediaItemPage({
     params,
@@ -18,13 +19,6 @@ export default function MediaItemPage({
     const [mediaItem, setMediaItem] = useState<MediaItemType | null>(null);
     const { profile } = useAuth();
     const router = useRouter();
-
-    const imageMap = {
-        movie: "/movie.png",
-        book: "/book.png",
-        game: "/game.png",
-        tvShow: "/tvshow.png",
-    };
 
     useEffect(() => {
         if (!profile?.uid) return;

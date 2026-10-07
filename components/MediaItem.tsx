@@ -3,16 +3,9 @@
 import type {MediaItemType} from "@/types"
 import Image from "next/image"
 import Link from "next/link"
+import { imageMap } from "@/data/imageMap"
 
 export default function MediaItem({ item }: { item: MediaItemType }) {
-
-    const imageMap = {
-        "movie": "/movie.png",
-        "book": "/book.png",
-        "game": "/game.png",
-        "tvShow": "/tvshow.png"
-    }
-
     return (
         <article className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
             <Link
