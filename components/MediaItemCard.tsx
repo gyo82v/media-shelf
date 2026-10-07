@@ -155,16 +155,10 @@ export default function MediaItemCard({ mediaItem }: Props) {
                     </div>
 
                     {/* Personal rating */}
-                    <div className="mt-6">
+                    <div className="mt-6 border-t border-neutral-200 pt-6 dark:border-neutral-800">
                         <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-white">
                             Rating
                         </h2>
-
-                        <div>
-                            <p>Rating test:</p>
-                            <StarRating rating={10} />
-                        </div>
-
                         {mediaItem.starRating !== undefined &&
                         mediaItem.starRating !== null ? (
                             <div className="flex items-center gap-3">
@@ -182,7 +176,7 @@ export default function MediaItemCard({ mediaItem }: Props) {
                     </div>
 
                     {/* Review total score */}
-                    <div className="mt-6 border-t border-neutral-200 pt-6 dark:border-neutral-800">
+                    <div className="mt-6 ">
                         <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
                             Review Score
                         </h2>
