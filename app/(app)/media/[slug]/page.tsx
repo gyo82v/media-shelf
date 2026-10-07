@@ -10,6 +10,7 @@ import {FiArrowLeft, FiEdit2, FiTrash2} from "react-icons/fi";
 import { formatType, formatStatus } from "@/lib/media";
 import { formatDate } from "@/lib/formatDate";
 import { imageMap } from "@/data/imageMap";
+import BackButton from "@/components/ui/BackButton";
 
 export default function MediaItemPage({
     params,
@@ -45,14 +46,7 @@ export default function MediaItemPage({
         <main className="mx-auto w-full max-w-6xl p-4 md:p-6">
 
             {/* Back button */}
-            <button
-                type="button"
-                onClick={() => router.back()}
-                className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-neutral-600 transition hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-            >
-                <FiArrowLeft size={18} />
-                Back
-            </button>
+            <BackButton />
 
             {/* Main item card */}
             <article className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
