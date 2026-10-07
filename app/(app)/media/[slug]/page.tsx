@@ -5,8 +5,54 @@ import { useAuth } from "@/providers/AuthProvider";
 import { useEffect, useState } from "react";
 import type { MediaItemType } from "@/types";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import {FiArrowLeft, FiEdit2, FiTrash2} from "react-icons/fi";
+import {FiEdit2, FiTrash2} from "react-icons/fi";
+import { formatType, formatStatus } from "@/lib/media";
+import { formatDate } from "@/lib/formatDate";
+import { imageMap } from "@/data/imageMap";
+import BackButton from "@/components/ui/BackButton";
+import MediaItemCard from "@/components/MediaItemCard";
+
+export default function MediaItemPage({
+    params,
+}: {
+    params: Promise<{ slug: string }>;
+}) {
+    const [mediaItem, setMediaItem] = useState<MediaItemType | null>(null);
+    const { profile } = useAuth();
+
+    useEffect(() => {
+        if (!profile?.uid) return;
+
+        const loadMedia = async () => {
+            const { slug } = await params;
+            const item = await getMediaBySlug(profile.uid, slug);
+
+            setMediaItem(item);
+        };
+
+        loadMedia();
+    }, [profile?.uid, params]);
+
+    return (
+        <main className="mx-auto w-full max-w-6xl p-4 md:p-6">
+            <BackButton />
+            <MediaItemCard mediaItem={mediaItem} />
+        </main>
+    );
+}
+
+
+
+/*
+
+"use client";
+
+import { getMediaBySlug } from "@/firebase/media";
+import { useAuth } from "@/providers/AuthProvider";
+import { useEffect, useState } from "react";
+import type { MediaItemType } from "@/types";
+import Image from "next/image";
+import {FiEdit2, FiTrash2} from "react-icons/fi";
 import { formatType, formatStatus } from "@/lib/media";
 import { formatDate } from "@/lib/formatDate";
 import { imageMap } from "@/data/imageMap";
@@ -19,7 +65,6 @@ export default function MediaItemPage({
 }) {
     const [mediaItem, setMediaItem] = useState<MediaItemType | null>(null);
     const { profile } = useAuth();
-    const router = useRouter();
 
     useEffect(() => {
         if (!profile?.uid) return;
@@ -44,16 +89,14 @@ export default function MediaItemPage({
 
     return (
         <main className="mx-auto w-full max-w-6xl p-4 md:p-6">
-
-            {/* Back button */}
             <BackButton />
 
-            {/* Main item card */}
+      
             <article className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
 
                 <div className="md:grid md:grid-cols-[320px_1fr]">
 
-                    {/* Image */}
+             
                     <div className="relative aspect-[3/2] w-full bg-neutral-100 md:aspect-auto md:min-h-full dark:bg-neutral-800">
                         {mediaItem && (
                             <Image
@@ -66,10 +109,10 @@ export default function MediaItemPage({
                         )}
                     </div>
 
-                    {/* Content */}
+           
                     <div className="flex flex-col p-5 md:p-7">
 
-                        {/* Title + badges */}
+                
                         <div className="mb-6">
                             <div className="mb-3 flex flex-wrap items-center gap-2">
                                 {mediaItem && (
@@ -90,7 +133,7 @@ export default function MediaItemPage({
                             </h1>
                         </div>
 
-                        {/* Metadata */}
+                 
                         <div className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
 
                             <div>
@@ -149,7 +192,7 @@ export default function MediaItemPage({
 
                         </div>
 
-                        {/* Description */}
+          
                         <div className="mt-7 border-t border-neutral-200 pt-6 dark:border-neutral-800">
                             <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-white">
                                 Description
@@ -160,7 +203,7 @@ export default function MediaItemPage({
                             </p>
                         </div>
 
-                        {/* Notes */}
+              
                         <div className="mt-6">
                             <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-white">
                                 Notes
@@ -171,7 +214,7 @@ export default function MediaItemPage({
                             </p>
                         </div>
 
-                        {/* Rating */}
+                  
                         <div className="mt-6">
                             <h2 className="mb-2 text-sm font-semibold text-neutral-900 dark:text-white">
                                 Rating
@@ -179,7 +222,7 @@ export default function MediaItemPage({
 
                             {mediaItem?.starRating ? (
                                 <div className="text-lg tracking-wide">
-                                    {/* Replace this later with your star component */}
+                         
                                     ★★★★★
                                     <span className="ml-2 text-sm text-neutral-500">
                                         {mediaItem.starRating}/10
@@ -192,7 +235,7 @@ export default function MediaItemPage({
                             )}
                         </div>
 
-                        {/* Review Score */}
+                     
 <div className="mt-6 ">
     <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
         Review Score
@@ -213,7 +256,7 @@ export default function MediaItemPage({
     )}
 </div>
 
-                        {/* Actions */}
+                   
                         <div className="mt-8 flex flex-col gap-3 border-t border-neutral-200 pt-6 sm:flex-row dark:border-neutral-800">
 
                             <button
@@ -238,7 +281,7 @@ export default function MediaItemPage({
                     </div>
                 </div>
 
-                {/* Review section */}
+           
                 <details className="border-t border-neutral-200 dark:border-neutral-800">
                     <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-50 md:px-7 dark:text-white dark:hover:bg-neutral-800/50">
                         Review
@@ -255,3 +298,9 @@ export default function MediaItemPage({
         </main>
     );
 }
+
+
+
+
+
+*/

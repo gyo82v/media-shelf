@@ -1,46 +1,23 @@
-please help me with this component:
+i have tested both version but none are working as especetd.
+i have tested like this:
 
-"use client"
+<div>
+    <p>Rating test:</p>
+    <StarRating rating={10} />
+</div>
 
-import type {MediaItemType} from "@/types"
-import Image from "next/image"
-import Link from "next/link"
+test outcome version 1:
 
-export default function MediaItem({ item }: { item: MediaItemType }) {
-    return (
-        <article>
-            <Link href={`/media/${item.slug}`} className="flex gap-4 p-4">
-                <div>
-                    <Image
-                        src=""
-                        alt={item.name}
-                        width={100}
-                        height={150}
-                    />
-                </div>
-                <div>
-                    <h3>{item.name}</h3>
-                    <p>{item.type}</p>
-                    <p>{item.genre}</p>
-                    <p>Added: {item.createdAt.toDate().toDateString()}</p>
-                </div>
-            </Link>  
-        </article>
-    )
-}
+- rating 0.5: all empty star: incorrect;
+- rating 1: half star yellow: incorrect;
+- rating 1.5: all empty stars: incorrect;
+- rating 2: one full star: incorrect;
+- rating 4.5: two yellow stars, three empty: incorrect;
+- rating 5: two purple stars, one half yellow star: incorrect;
+- rating 5.5: two purple stars, three empty stars; incorrect;
+- rating 8: four purple stars, one empty star: incorrect;
+- rating 9: four purple stars, one half purple half empty star: incorrect;
+- rating 10: five purple stars: correct; 
 
-i dont remeber how images works in Next.js
-i have four images in the public folder:
-book.png;
-game.png;
-movie.png;
-tvshow.png.
-
-each MediaItem should rendre the image base on the item.type field:
-type === "movie" => movie.png;
-type === "book" => book.png;
-type === "game" => game.png;
-type === "tvShow" => tvshow.png;
-
-
-
+test outcome version 2:
+- 
