@@ -6,11 +6,9 @@ import { useEffect, useState } from "react";
 import type { MediaItemType } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import {
-    FiArrowLeft,
-    FiEdit2,
-    FiTrash2,
-} from "react-icons/fi";
+import {FiArrowLeft, FiEdit2, FiTrash2} from "react-icons/fi";
+import { formatType, formatStatus } from "@/lib/media";
+import { formatDate } from "@/lib/formatDate";
 
 export default function MediaItemPage({
     params,
@@ -26,44 +24,6 @@ export default function MediaItemPage({
         book: "/book.png",
         game: "/game.png",
         tvShow: "/tvshow.png",
-    };
-
-    const formatType = (type?: MediaItemType["type"]) => {
-        switch (type) {
-            case "movie":
-                return "Movie";
-            case "book":
-                return "Book";
-            case "game":
-                return "Game";
-            case "tvShow":
-                return "TV Show";
-            default:
-                return "N/A";
-        }
-    };
-
-    const formatStatus = (status?: MediaItemType["status"]) => {
-        switch (status) {
-            case "completed":
-                return "Completed";
-            case "inProgress":
-                return "In Progress";
-            case "wishList":
-                return "Wishlist";
-            default:
-                return "N/A";
-        }
-    };
-
-    const formatDate = (timestamp: MediaItemType["createdAt"] | null | undefined) => {
-        if (!timestamp) return "Not available";
-
-        return timestamp.toDate().toLocaleDateString(undefined, {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-        });
     };
 
     useEffect(() => {
@@ -307,85 +267,3 @@ export default function MediaItemPage({
         </main>
     );
 }
-
-
-
-
-/*
-
-"use client"
-
-import { getMediaBySlug } from "@/firebase/media";
-import { useAuth } from "@/providers/AuthProvider";
-import { useEffect, useState } from "react";
-import type { MediaItemType } from "@/types";
-import Image from "next/image";
-
-export default function MediaItemPage({
-    params,
-}: {
-    params: Promise<{ slug: string }>;
-}) {
-    const [mediaItem, setMediaItem] = useState<MediaItemType | null>(null);
-    const { profile } = useAuth();
-
-    const imageMap = {
-        "movie": "/movie.png",
-        "book": "/book.png",
-        "game": "/game.png",
-        "tvShow": "/tvshow.png"
-    }
-
-    useEffect(() => {
-        if (!profile?.uid) return;
-
-        const loadMedia = async () => {
-            const { slug } = await params;
-
-            const item = await getMediaBySlug(profile.uid, slug);
-
-            console.log("item:", item);
-
-            setMediaItem(item);
-        };
-
-        loadMedia();
-    }, [profile?.uid, params]);
-
-    return (
-        <article className="flex  gap-4 p-4">
-            <div>
-                {mediaItem && (
-                    <Image
-                        src={imageMap[mediaItem.type]}
-                        alt={mediaItem.name}
-                        width={600}
-                        height={400}
-                        className=""
-                    />
-                )}  
-            </div>
-            <div>
-                <h1>{mediaItem?.name || "Media Item"}</h1>
-                <p>Type: {mediaItem?.type}</p>
-                <p>Genre: {mediaItem?.genre}</p>
-                <p>Review profile: {mediaItem?.reviewProfile || "N/A"}</p>
-                <p>Status: {mediaItem?.status}</p>
-                <p>Added: {mediaItem?.createdAt.toDate().toDateString()}</p>
-                <p>Completed: {mediaItem?.finishedAt ? mediaItem.finishedAt.toDate().toDateString() : "N/A"}</p>
-                <p>Country: {mediaItem?.country || "N/A"}</p>
-                <p>Release Date: {mediaItem?.year || "N/A"}</p>
-                <p>Description: {mediaItem?.description || "N/A"}</p>
-                <p>Notes: {mediaItem?.notes || "N/A"}</p>
-                <p>Rating: {mediaItem?.starRating || "N/A"}</p>
-                <p>Review: {"review content if exists othervise placeholder"}</p>
-            </div>
-        </article>
-    );
-}
-
-
-
-
-
-*/
