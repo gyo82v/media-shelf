@@ -14,6 +14,7 @@ export async function addMedia(
         year?: number | null
         description?: string;
         notes?: string;
+        production?: "indie" | "studio"
     }
 ) {
    

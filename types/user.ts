@@ -57,6 +57,7 @@ export interface MediaItemType {
     description?: string
     genre: string
     reviewProfile: string
+    production?: "indie" | "studio"
     image: string
     country?: string
     year?: number
