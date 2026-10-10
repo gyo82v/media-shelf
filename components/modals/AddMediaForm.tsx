@@ -24,13 +24,14 @@ export default function AddMediaForm({status, setShowModal}:Props){
         const yearString = formData.get("year") ?? ""
         const description = formData.get("description")?.toString() ?? ""
         const notes = formData.get("notes")?.toString() ?? ""
+        const production = formData.get("production")?.toString() as "indie" | "studio" | undefined
 
         const year = yearString ? Number(yearString) : null
 
         if(!profile) throw new Error("No profile found")
 
         try{
-            await addMedia(profile.uid, {name, type, status:status, genre, reviewProfile, country, year, description, notes})
+            await addMedia(profile.uid, {name, type, status:status, genre, reviewProfile, country, year, description, notes, production})
             setShowModal(false)
 
         }catch(err){
@@ -49,6 +50,12 @@ export default function AddMediaForm({status, setShowModal}:Props){
             placeholder="Select type" 
             options={[{ value: "movie", label: "Movie" },{ value: "tvShow", label: "TV Show" },
                       { value: "game", label: "Game" },{ value: "book", label: "Book" },]} 
+          />
+          <FormSelect 
+            name="production" 
+            label="Production (Games only)" 
+            placeholder="Select production type" 
+            options={[{ value: "indie", label: "Indie" },{ value: "studio", label: "Studio" }]} 
           />
           <div>
             <p className="font-extralight uppercase">Optional informations</p>

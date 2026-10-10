@@ -34,6 +34,7 @@ export async function addMedia(
         year: media.year ?? "",
         description: media.description ?? "",
         notes: media.notes ?? "",
+        production: media.production ?? "",
 
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
