@@ -51,6 +51,9 @@ export async function addMedia(
 
         reviewScore: {
             criteria: {},
+            modifiers: {},
+            baseScore: null,
+            totalScore: null
         },
     });
 
