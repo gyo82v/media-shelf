@@ -57,6 +57,14 @@ export interface ReviewProfileConfig {
     criteriaWeights: Partial<Record<ReviewCriterion, number>>;
 }
 
+export interface ReviewCalculation {
+    criterionPoints: Partial<Record<ReviewCriterion, number>>;
+    modifierPoints: Record<ReviewModifier, number>;
+    modifierAdjustment: number;
+    baseScore: number;
+    totalScore: number;
+}
+
 export interface MediaItemType {
     id: string
     name: string
