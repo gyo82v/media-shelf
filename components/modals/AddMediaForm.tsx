@@ -4,6 +4,7 @@ import Button from "../ui/Button"
 import Formfield from "../ui/form/FormField"
 import FormTextArea from "../ui/form/FormTextArea"
 import FormSelect from "../ui/form/FormSelect"
+import {SmallDivider} from "../ui/Dividers"
 
 type Props = {
     status: "inProgress" | "wishList" | "completed"
@@ -43,7 +44,6 @@ export default function AddMediaForm({status, setShowModal}:Props){
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <Formfield name="title" label="Title" />
           <Formfield name="genre" label="Genre" />
-          <Formfield name="reviewProfile" label="Review Tag" />
           <FormSelect 
             name="type" 
             label="Type" 
@@ -51,12 +51,34 @@ export default function AddMediaForm({status, setShowModal}:Props){
             options={[{ value: "movie", label: "Movie" },{ value: "tvShow", label: "TV Show" },
                       { value: "game", label: "Game" },{ value: "book", label: "Book" },]} 
           />
-          <FormSelect 
-            name="production" 
-            label="Production (Games only)" 
-            placeholder="Select production type" 
-            options={[{ value: "indie", label: "Indie" },{ value: "studio", label: "Studio" }]} 
-          />
+          <SmallDivider />
+          <div className="flex flex-col gap-3">
+            <FormSelect 
+              name="reviewProfile"
+              label="Review Profile"
+              placeholder="Select review profile"
+              options={[
+                { value: "Rpg", label: "Rpg" },
+                { value: "Action", label: "Action" },
+                { value: "Strategy", label: "Strategy" },
+                { value: "Horror", label: "Horror" },
+                { value: "Survival", label: "Survival" },
+                { value: "Mmorpg", label: "Mmorpg" },
+                { value: "RogueLike", label: "RogueLike" },
+                { value: "Sports", label: "Sports" },
+                { value: "Platformer", label: "Platformer" },
+                { value: "Adventure", label: "Adventure" },
+                { value: "Colony", label: "Colony" }
+              ]}
+            />
+            <FormSelect 
+              name="production" 
+              label="Production (Games only)" 
+              placeholder="Select production type" 
+              options={[{ value: "indie", label: "Indie" },{ value: "studio", label: "Studio" }]} 
+            />
+          </div>
+          <SmallDivider />
           <div>
             <p className="font-extralight uppercase">Optional informations</p>
             <div className="flex flex-col gap-3">

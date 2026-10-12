@@ -4,6 +4,7 @@ import Button from "../ui/Button"
 import Formfield from "../ui/form/FormField"
 import FormTextArea from "../ui/form/FormTextArea"
 import FormSelect from "../ui/form/FormSelect"
+import {SmallDivider} from "../ui/Dividers"
 
 type Props = {
     setShowModal: (value:boolean) => void
@@ -23,13 +24,14 @@ export default function AddMediaAndReviewForm({setShowModal}:Props){
         const yearString = formData.get("year") ?? ""
         const description = formData.get("description")?.toString() ?? ""
         const notes = formData.get("notes")?.toString() ?? ""
+        const production = formData.get("production")?.toString() as "indie" | "studio" | undefined
 
         const year = yearString ? Number(yearString) : null
 
         if(!profile) throw new Error("No profile found")
 
         try{
-            await addMedia(profile.uid, {name, type, status:"completed", genre, reviewProfile, country, year, description, notes})
+            await addMedia(profile.uid, {name, type, status:"completed", genre, reviewProfile, country, year, description, notes, production})
             setShowModal(false)
 
         }catch(err){
@@ -41,7 +43,6 @@ export default function AddMediaAndReviewForm({setShowModal}:Props){
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <Formfield name="title" label="Title" />
           <Formfield name="genre" label="Genre" />
-          <Formfield name="reviewProfile" label="Review Tag" />
           <FormSelect 
             name="type" 
             label="Type" 
@@ -49,6 +50,34 @@ export default function AddMediaAndReviewForm({setShowModal}:Props){
             options={[{ value: "movie", label: "Movie" },{ value: "tvShow", label: "TV Show" },
                       { value: "game", label: "Game" },{ value: "book", label: "Book" },]} 
           />
+          <SmallDivider />
+          <div className="flex flex-col gap-3">
+            <FormSelect 
+              name="reviewProfile"
+              label="Review Profile"
+              placeholder="Select review profile"
+              options={[
+                { value: "Rpg", label: "Rpg" },
+                { value: "Action", label: "Action" },
+                { value: "Strategy", label: "Strategy" },
+                { value: "Horror", label: "Horror" },
+                { value: "Survival", label: "Survival" },
+                { value: "Mmorpg", label: "Mmorpg" },
+                { value: "RogueLike", label: "RogueLike" },
+                { value: "Sports", label: "Sports" },
+                { value: "Platformer", label: "Platformer" },
+                { value: "Adventure", label: "Adventure" },
+                { value: "Colony", label: "Colony" }
+              ]}
+            />
+            <FormSelect 
+              name="production" 
+              label="Production (Games only)" 
+              placeholder="Select production type" 
+              options={[{ value: "indie", label: "Indie" },{ value: "studio", label: "Studio" }]} 
+            />
+          </div>
+          <SmallDivider />
           <div>
             <p className="font-extralight uppercase">Optional informations</p>
             <div className="flex flex-col gap-3">
@@ -58,6 +87,7 @@ export default function AddMediaAndReviewForm({setShowModal}:Props){
               <FormTextArea name="notes"  label="Additional notes" placeholder="Add any additional notes..."  />
             </div>
           </div>
+          <SmallDivider />
           <div className="border-b border-t border-gray-500 p-4 flex  items-center justify-center">
             <p>review section here</p>
           </div>

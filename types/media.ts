@@ -10,7 +10,8 @@ export type ReviewProfile =
     | "RogueLike"
     | "Sports"
     | "Platformer"
-    | "Adventure";
+    | "Adventure"
+    | "Colony";
 
 export type GameProduction = "indie" | "studio";
 
