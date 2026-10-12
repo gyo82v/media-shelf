@@ -7,6 +7,7 @@ import AddMediaModal from "@/components/modals/AddMediaModal";
 import AddMediaAndReviewModal from "@/components/modals/AddMediaAndReviewModal";
 import Button from "@/components/ui/Button";
 
+
 export default function HomePage() {
     const {profile} = useAuth();
     const [showWishListModal, setShowWishListModal] = useState(false);
