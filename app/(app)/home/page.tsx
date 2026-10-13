@@ -4,28 +4,18 @@ import {useAuth} from "@/providers/AuthProvider";
 import {useState} from "react";
 import { SmallDivider } from "@/components/ui/Dividers";
 import AddMediaModal from "@/components/modals/AddMediaModal";
-import AddMediaAndReviewModal from "@/components/modals/AddMediaAndReviewModal";
 import Button from "@/components/ui/Button";
-
 
 export default function HomePage() {
     const {profile} = useAuth();
-    const [showWishListModal, setShowWishListModal] = useState(false);
-    const [showInProgressModal, setShowInProgressModal] = useState(false)
-    const [showAddReviewModal, setShowAddReviewModal] = useState(false)
+    const [showAddMediaModal, setShowAddMediaModal] = useState(false);
 
     return(
         <div className="flex flex-col gap-4 mt-10 p-4">
             <h1 className="text-xl font-bold mb-4">{profile?.displayName} dashboard</h1>
             <div className="flex gap-6 ">
-                <Button onClick={() => setShowWishListModal(true)}>
-                    Add to wishlist
-                </Button>
-                <Button onClick={() => setShowInProgressModal(true)}>
-                    Add to in progress
-                </Button>
-                <Button onClick={() => setShowAddReviewModal(true)}>
-                    Add review
+                <Button onClick={() => setShowAddMediaModal(true)}>
+                    Add Media
                 </Button>
             </div>
             <SmallDivider />
@@ -60,12 +50,7 @@ export default function HomePage() {
                 <p>Games:</p>
                 <p>Books:</p>
             </div>
-            {
-              showWishListModal ? <AddMediaModal status="wishList" setShowModal={setShowWishListModal} /> :
-              showInProgressModal ? <AddMediaModal status="inProgress" setShowModal={setShowInProgressModal} /> :
-              showAddReviewModal ? <AddMediaAndReviewModal setShowModal={setShowAddReviewModal} /> :
-              null
-            }
+            {showAddMediaModal && <AddMediaModal setShowModal={setShowAddMediaModal} />}
         </div>
     )
 }

@@ -21,4 +21,4 @@ export const reviewProfileConfigs: Partial<Record<ReviewProfile, ReviewProfileCo
             difficultyBalance: 4,
         },
     },
-};
+}
