@@ -9,7 +9,7 @@ export async function addMedia(
         type: "movie" | "book" | "game" | "tvShow";
         status: "inProgress" | "wishList" | "completed";
         genre: string;
-        reviewProfile: string;
+        reviewProfile?: string;
         country?: string;
         year?: number | null
         description?: string;
