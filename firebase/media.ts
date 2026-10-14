@@ -1,6 +1,6 @@
-import { collection, getDocs, query, where } from "firebase/firestore"
+import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "./firebase"
-import type { MediaItemType } from "@/types"
+import type { MediaItemType, ReviewProfile, ReviewScore, GameProduction } from "@/types"
 
 export async function getMediaByStatus(
     uid: string,
@@ -46,4 +46,46 @@ export async function getMediaBySlug(
         id: doc.id,
         ...doc.data(),
     } as MediaItemType;
+}
+
+export async function getMediaById(
+    uid: string,
+    mediaId: string
+): Promise<MediaItemType | null> {
+    const mediaRef = doc(db, "users", uid, "media", mediaId);
+    const snapshot = await getDoc(mediaRef);
+
+    if (!snapshot.exists()) {
+        return null;
+    }
+
+    return {
+        ...snapshot.data(),
+        id: snapshot.id,
+    } as MediaItemType;
+}
+
+
+type SaveMediaReviewInput = {
+    reviewProfile: ReviewProfile;
+    production?: GameProduction;
+    reviewScore: ReviewScore;
+};
+
+
+export async function saveMediaReview(
+    uid: string,
+    mediaId: string,
+    data: SaveMediaReviewInput
+): Promise<void> {
+    const mediaRef = doc(db, "users", uid, "media", mediaId);
+
+    await updateDoc(mediaRef, {
+        reviewProfile: data.reviewProfile,
+        ...(data.production
+            ? { production: data.production }
+            : {}),
+        reviewScore: data.reviewScore,
+        updatedAt: serverTimestamp(),
+    });
 }

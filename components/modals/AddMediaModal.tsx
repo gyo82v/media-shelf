@@ -3,10 +3,11 @@ import { FiX } from "react-icons/fi";
 import AddMedia from "../AddMedia";
 
 type Props = {
-    setShowModal: (value:boolean) => void
-}
+    setShowModal: (value: boolean) => void;
+    onAddAndReview: (mediaId: string) => void;
+};
 
-export default function AddMediaModal({setShowModal}:Props){
+export default function AddMediaModal({setShowModal, onAddAndReview}:Props){
     return(
         <Modal>
             <div>
@@ -18,7 +19,7 @@ export default function AddMediaModal({setShowModal}:Props){
                   <FiX size={25} />
                 </button>
             </div>
-            <AddMedia setShowModal={setShowModal} />
+            <AddMedia setShowModal={setShowModal} onAddAndReview={onAddAndReview} />
         </Modal>
     )
 }

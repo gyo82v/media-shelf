@@ -6,11 +6,19 @@ import FormTextArea from "./ui/form/FormTextArea"
 import FormSelect from "./ui/form/FormSelect"
 import {SmallDivider} from "./ui/Dividers"
 
-export default function AddMedia({setShowModal}: {setShowModal: (value:boolean) => void}) {
+type Props = {
+  setShowModal: (value: boolean) => void;
+  onAddAndReview: (mediaId: string) => void;
+}
+
+export default function AddMedia({setShowModal, onAddAndReview}: Props) {
     const {profile} = useAuth()
 
     const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
+        const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+        const intent = submitter?.value === "addAndReview" ? "addAndReview" : "addOnly";
+
         const formData = new FormData(e.currentTarget)
         const name =  formData.get("title")?.toString() ?? ""
         const genre = formData.get("genre")?.toString() ?? ""
@@ -27,10 +35,11 @@ export default function AddMedia({setShowModal}: {setShowModal: (value:boolean) 
         if(!profile) throw new Error("No profile found.")
 
         try{
-            await addMedia(profile.uid, {name, genre, status, type, country, description, notes, year, reviewProfile})
-            setShowModal(false)
+          const mediaId =  await addMedia(profile.uid, {name, genre, status, type, country, description, notes, year, reviewProfile})
+          setShowModal(false)
+          if(intent === "addAndReview"){onAddAndReview(mediaId)}
         }catch(err){
-            console.error("Failed to save the media:", err)
+          console.error("Failed to save the media:", err)
         }
     }
 
@@ -66,8 +75,8 @@ export default function AddMedia({setShowModal}: {setShowModal: (value:boolean) 
           </div>
           <SmallDivider className="my-7" />
           <div className="flex  gap-3 w-full justify-center items-center">
-            <Button className="flex-1" type="submit" variant="primary">Add Media</Button>
-            <Button className="flex-1" type="submit">Add media and review</Button>
+            <Button className="flex-1" type="submit" name="intent" value="addOnly" variant="primary">Add Media</Button>
+            <Button className="flex-1" type="submit" name="intent" value="addAndReview">Add media and review</Button>
           </div>
         </form>
     )

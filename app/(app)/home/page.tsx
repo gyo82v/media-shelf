@@ -5,6 +5,7 @@ import {useState} from "react";
 import { SmallDivider } from "@/components/ui/Dividers";
 import AddMediaModal from "@/components/modals/AddMediaModal";
 import Button from "@/components/ui/Button";
+import ReviewModal from "@/components/modals/ReviewModal";
 
 export default function HomePage() {
     const {profile} = useAuth();
