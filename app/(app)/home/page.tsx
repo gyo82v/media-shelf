@@ -9,6 +9,13 @@ import Button from "@/components/ui/Button";
 export default function HomePage() {
     const {profile} = useAuth();
     const [showAddMediaModal, setShowAddMediaModal] = useState(false);
+    const [showReviewModal, setShowReviewModal] = useState(false);
+    const [selectedMediaId, setSelectedMediaId] = useState<string | null>(null);
+
+    const handleAddAndReview = (mediaId: string) => {
+      setSelectedMediaId(mediaId);
+      setShowReviewModal(true);
+    };
 
     return(
         <div className="flex flex-col gap-4 mt-10 p-4">
@@ -50,7 +57,8 @@ export default function HomePage() {
                 <p>Games:</p>
                 <p>Books:</p>
             </div>
-            {showAddMediaModal && <AddMediaModal setShowModal={setShowAddMediaModal} />}
+            {showAddMediaModal && (<AddMediaModal setShowModal={setShowAddMediaModal} onAddAndReview={handleAddAndReview}/>)}
+            {showReviewModal && selectedMediaId && (<ReviewModal mediaId={selectedMediaId} setShowModal={setShowReviewModal}/>)}
         </div>
     )
 }

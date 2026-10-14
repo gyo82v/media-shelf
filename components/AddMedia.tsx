@@ -67,7 +67,7 @@ export default function AddMedia({setShowModal}: {setShowModal: (value:boolean) 
           <SmallDivider className="my-7" />
           <div className="flex  gap-3 w-full justify-center items-center">
             <Button className="flex-1" type="submit" variant="primary">Add Media</Button>
-            <Button className="flex-1">Add media and review</Button>
+            <Button className="flex-1" type="submit">Add media and review</Button>
           </div>
         </form>
     )
