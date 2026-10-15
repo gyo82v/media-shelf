@@ -11,7 +11,11 @@ export type ReviewProfile =
     | "Sports"
     | "Platformer"
     | "Adventure"
-    | "Colony";
+    | "Colony"
+    | "Shooter"
+    | "Racing"
+    | "Simulation"
+    | "Puzzle"
 
 export type GameProduction = "indie" | "studio";
 
@@ -32,7 +36,12 @@ export type ReviewCriterion =
     | "progression"
     | "controls"
     | "difficultyBalance"
-    | "online";
+    | "online"
+    | "strategicDepth"
+    | "resourceManagement"
+    | "runVariety"
+    | "sportMechanics"
+    | "rosterVariety"
 
 export type ReviewModifier =
     | "monetization"

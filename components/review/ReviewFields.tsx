@@ -37,7 +37,12 @@ const criterionLabels: Record<ReviewCriterion, string> = {
     progression: "Progression",
     controls: "Controls",
     difficultyBalance: "Difficulty & Balance",
-    online: "Online",
+    online: "Online & Social Experience",
+    strategicDepth: "Strategic Depth",
+    resourceManagement: "Resources Managment",
+    runVariety: "Run Variety",
+    sportMechanics: "Sport Mechanics",
+    rosterVariety: "Roster Variety"
 };
 
 
