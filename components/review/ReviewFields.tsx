@@ -2,6 +2,7 @@
 import GradeSelector from "./GradeSelector";
 
 import { reviewProfileConfigs } from "@/config/reviewProfiles";
+import {reviewCriteria, reviewModifiers} from "@/config/reviewCriteria";
 
 import type {
     ReviewProfile,
@@ -148,20 +149,26 @@ export default function ReviewFields({
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    {activeCriteria.map((criterion) => (
-                        <GradeSelector
-                            key={criterion}
-                            name={criterion}
-                            label={criterionLabels[criterion]}
-                            max={10}
-                            defaultValue={criteria[criterion] ?? null}
-                            required
-                            minLabel="Very poor"
-                            middleLabel="Average"
-                            maxLabel="Excellent"
-                            disabled={disabled}
-                        />
-                    ))}
+                  {activeCriteria.map((criterion) => {
+                    const criterionInfo = reviewCriteria[criterion];
+                    const description = config.criteriaDescriptions?.[criterion] ?? criterionInfo.description;
+
+                    return (
+                      <GradeSelector
+                        key={criterion}
+                        name={criterion}
+                        label={criterionInfo.label}
+                        description={description}
+                        max={10}
+                        defaultValue={criteria[criterion] ?? null}
+                        required
+                        minLabel="Very poor"
+                        middleLabel="Average"
+                        maxLabel="Excellent"
+                        disabled={disabled}
+                      />
+                    );
+                  })}
                 </div>
             </section>
 
@@ -179,25 +186,23 @@ export default function ReviewFields({
                 </div>
 
                 <div className="flex flex-col gap-6">
-                    {(Object.keys(
-                        modifierConfigs
-                    ) as ReviewModifier[]).map((modifier) => {
-                        const item = modifierConfigs[modifier];
-
-                        return (
-                            <GradeSelector
-                                key={modifier}
-                                name={modifier}
-                                label={item.label}
-                                max={5}
-                                defaultValue={modifiers[modifier] ?? 0}
-                                required
-                                minLabel={item.minLabel}
-                                middleLabel={item.middleLabel}
-                                maxLabel={item.maxLabel}
-                                disabled={disabled}
-                            />
-                        );
+                    {(Object.keys(reviewModifiers) as ReviewModifier[]).map((modifier) => {
+                      const item = reviewModifiers[modifier];
+                      return (
+                       <GradeSelector
+                         key={modifier}
+                         name={modifier}
+                         label={item.label}
+                         description={item.description}
+                         max={5}
+                         defaultValue={modifiers[modifier] ?? 0}
+                         required
+                         minLabel={item.minLabel}
+                         middleLabel={item.middleLabel}
+                         maxLabel={item.maxLabel}
+                         disabled={disabled}
+                       />
+                      );
                     })}
                 </div>
             </section>

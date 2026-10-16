@@ -9,6 +9,7 @@ type Props = {
     maxLabel?: string;
     required?: boolean;
     disabled?: boolean;
+    description?: string;
 };
 
 export default function GradeSelector({
@@ -21,6 +22,7 @@ export default function GradeSelector({
     maxLabel,
     required = false,
     disabled = false,
+    description
 }: Props) {
     const grades = Array.from(
         { length: max + 1 },
@@ -40,6 +42,11 @@ export default function GradeSelector({
             <legend className="mb-2 text-sm font-medium text-slate-800 dark:text-slate-100">
                 {label}
             </legend>
+            {description && (
+               <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                 {description}
+               </p>
+            )}
 
             <div className={gridClassName}>
                 {grades.map((grade) => (
