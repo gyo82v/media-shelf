@@ -42,7 +42,19 @@ const criterionLabels: Record<ReviewCriterion, string> = {
     resourceManagement: "Resources Managment",
     runVariety: "Run Variety",
     sportMechanics: "Sport Mechanics",
-    rosterVariety: "Roster Variety"
+    rosterVariety: "Roster Variety",
+    systemsDepth: "System depth",
+    colonyManagement: "Colony Managment",
+    shootingMechanics: "Shooting Mechanics",
+    drivingMechanics: "Driving Mechanics",
+    trackDesign: "Track Design",
+    puzzleDesign: "Puzzle Design",
+    fightingMechanics: "Fighting Mechanics",
+    combatMechanics: "Combat Mechanics",
+    lootItemization: "Loot itemization",
+    buildVariety: "Build variety",
+    managementSystems: "Management System",
+    interfaceUsability: "Interface Usability"
 };
 
 

@@ -16,6 +16,9 @@ export type ReviewProfile =
     | "Racing"
     | "Simulation"
     | "Puzzle"
+    | "Fighting"
+    | "ActionRpg"
+    | "Management"
 
 export type GameProduction = "indie" | "studio";
 
@@ -42,6 +45,16 @@ export type ReviewCriterion =
     | "runVariety"
     | "sportMechanics"
     | "rosterVariety"
+    | "systemsDepth"
+    | "colonyManagement"
+    | "shootingMechanics"
+    | "drivingMechanics"
+    | "trackDesign"
+    | "puzzleDesign"
+    | "fightingMechanics"
+    | "combatMechanics"
+    | "lootItemization"
+    | "buildVariety"
 
 export type ReviewModifier =
     | "monetization"
