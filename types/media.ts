@@ -55,6 +55,8 @@ export type ReviewCriterion =
     | "combatMechanics"
     | "lootItemization"
     | "buildVariety"
+    | "managementSystems"
+    | "interfaceUsability"
 
 export type ReviewModifier =
     | "monetization"
@@ -78,6 +80,7 @@ export interface ReviewScore {
 
 export interface ReviewProfileConfig {
     criteriaWeights: Partial<Record<ReviewCriterion, number>>;
+    criteriaDescriptions?: Partial<Record<ReviewCriterion, string>>;
 }
 
 export interface ReviewCalculation {
