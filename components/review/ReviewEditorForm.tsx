@@ -13,6 +13,7 @@ import Button from "@/components/ui/Button";
 import ReviewFields from "@/components/review/ReviewFields";
 import ReviewProgress from "@/components/review/ReviewProgress";
 import ReviewScorePreview from "@/components/review/ReviewScorePreview";
+import StarRatingInput from "@/components/review/StarRatingInput";
 
 import { reviewProfileConfigs } from "@/config/reviewProfiles";
 import { calculateReviewScore } from "@/lib/scoring";
@@ -28,13 +29,15 @@ import type {
 
 type Props = {
     reviewProfile: ReviewProfile;
+    starRating: number | null;
     criteria?: ReviewCriteria;
     modifiers?: ReviewModifiers;
     saving: boolean;
-    onSubmit: (
-        criteria: ReviewCriteria,
-        modifiers: ReviewModifiers
-    ) => Promise<void>;
+    onSubmit: (data: {
+        starRating: number;
+        criteria: ReviewCriteria;
+        modifiers: ReviewModifiers;
+    }) => Promise<void>;
     onCancel: () => void;
 };
 
@@ -51,6 +54,7 @@ export default function ReviewEditorForm({
     criteria = {},
     modifiers = {},
     saving,
+    starRating,
     onSubmit,
     onCancel,
 }: Props) {
@@ -163,8 +167,21 @@ export default function ReviewEditorForm({
         setError("");
 
         const formData = new FormData(e.currentTarget);
+        const starRatingRaw = formData.get("starRating");
         const nextCriteria: ReviewCriteria = {};
         const nextModifiers: ReviewModifiers = {};
+
+        if (typeof starRatingRaw !== "string" || starRatingRaw === "") {
+            throw new Error("Please select your overall star rating.");
+        }
+
+        const starRating = Number(starRatingRaw);
+        if (
+          !Number.isFinite(starRating) ||
+          starRating < 0 ||
+          starRating > 10 ||
+          !Number.isInteger(starRating * 2)
+        ) { throw new Error("The overall rating must be between 0 and 10 in 0.5 increments.")}
 
         try {
             for (const criterion of activeCriteria) {
@@ -204,7 +221,7 @@ export default function ReviewEditorForm({
                 );
             }
 
-            await onSubmit(nextCriteria, nextModifiers);
+             await onSubmit({starRating, criteria: nextCriteria, modifiers: nextModifiers});
         } catch (err) {
             setError(
                 err instanceof Error
@@ -223,6 +240,11 @@ export default function ReviewEditorForm({
                 updateReviewPreview(e.currentTarget)
             }
         >
+            <StarRatingInput
+                name="starRating"
+                defaultValue={starRating}
+                disabled={saving}
+            />
             <ReviewProgress
                 completedCriteria={completedCriteria}
                 totalCriteria={activeCriteria.length}

@@ -121,16 +121,14 @@ export default function ReviewModal({mediaId, setShowModal}: Props) {
         setError("");
         setStep("review");
     };
-
-    const handleSaveReview = async (criteria: ReviewCriteria,modifiers: ReviewModifiers): Promise<void> => {
+ 
+    const handleSaveReview = async ({starRating, criteria, modifiers}: {starRating: number;criteria: ReviewCriteria;modifiers: ReviewModifiers;}): Promise<void> => {
         if (!uid || !media) throw new Error("Unable to save the review.")
 
-        if(media.type !== "game" || !selectedReviewProfile || !selectedProduction) {
+        if (media.type !== "game" || !selectedReviewProfile || !selectedProduction) {
             throw new Error("Please complete the review setup.");
         }
 
-        // Calculate again before saving, so the persisted score
-        // comes from the shared scoring engine.
         const result = calculateReviewScore(selectedReviewProfile, criteria, modifiers);
 
         if (!result) throw new Error("Please complete all review grades.")
@@ -148,6 +146,7 @@ export default function ReviewModal({mediaId, setShowModal}: Props) {
             await saveMediaReview(uid, mediaId, {
                 reviewProfile: selectedReviewProfile,
                 production: selectedProduction,
+                starRating,
                 reviewScore,
             });
 
@@ -156,6 +155,7 @@ export default function ReviewModal({mediaId, setShowModal}: Props) {
             setSaving(false);
         }
     };
+
 
     return (
         <Modal>
@@ -251,6 +251,7 @@ export default function ReviewModal({mediaId, setShowModal}: Props) {
                                 saving={saving}
                                 onSubmit={handleSaveReview}
                                 onCancel={() => setShowModal(false)}
+                                starRating={media.starRating}
                             />
                         )}
                     </>

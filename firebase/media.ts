@@ -70,6 +70,7 @@ type SaveMediaReviewInput = {
     reviewProfile: ReviewProfile;
     production?: GameProduction;
     reviewScore: ReviewScore;
+    starRating: number;
 };
 
 
@@ -85,6 +86,7 @@ export async function saveMediaReview(
         ...(data.production
             ? { production: data.production }
             : {}),
+        starRating: data.starRating,
         reviewScore: data.reviewScore,
         updatedAt: serverTimestamp(),
     });
