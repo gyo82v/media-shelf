@@ -160,9 +160,7 @@ export default function ReviewEditorForm({
         updateReviewPreview(formRef.current);
     }, [updateReviewPreview]);
 
-    const handleSubmit = async (
-        e: React.SyntheticEvent<HTMLFormElement>
-    ) => {
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
 
@@ -176,6 +174,7 @@ export default function ReviewEditorForm({
         }
 
         const starRating = Number(starRatingRaw);
+        
         if (
           !Number.isFinite(starRating) ||
           starRating < 0 ||
