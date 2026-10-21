@@ -150,4 +150,5 @@ export const movieProfileConfigs = {
     },
 } satisfies Record<string, MovieProfileConfig>
 
-export type MovieProfileKey = keyof typeof movieProfileConfigs
+
+export type MovieReviewProfileKey = keyof typeof movieProfileConfigs
