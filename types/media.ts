@@ -1,5 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 
+export type MediaReviewCriteria =
+    Partial<Record<string, number>>;
+
 export type ReviewProfile =
     | "Rpg"
     | "Action"
@@ -72,7 +75,7 @@ export type ReviewModifiers =
     Partial<Record<ReviewModifier, number>>;
 
 export interface ReviewScore {
-    criteria: ReviewCriteria;
+    criteria: MediaReviewCriteria;
     modifiers: ReviewModifiers;
     baseScore: number | null;
     totalScore: number | null;

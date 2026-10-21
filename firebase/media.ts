@@ -2,6 +2,7 @@ import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimest
 import { db } from "./firebase"
 import type { MediaItemType, ReviewProfile, ReviewScore, GameProduction } from "@/types"
 import type { MovieReviewProfileKey } from "@/config/movieProfile"
+import type { BookReviewProfileKey } from "@/config/bookProfile";
 
 export async function getMediaByStatus(
     uid: string,
@@ -68,7 +69,7 @@ export async function getMediaById(
 
 
 type SaveMediaReviewInput = {
-    reviewProfile: ReviewProfile | MovieReviewProfileKey
+    reviewProfile: ReviewProfile | MovieReviewProfileKey | BookReviewProfileKey
     production?: GameProduction;
     reviewScore: ReviewScore;
     starRating: number;
