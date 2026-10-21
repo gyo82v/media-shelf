@@ -1,8 +1,8 @@
 import type { MovieCriterionKey } from "./movieReviewCriteria"
 
-type MovieProfileConfig = {
+export type MovieProfileConfig = {
     label: string
-    description: string
+    description?: string
     criteriaWeights: Record<MovieCriterionKey, number>
     criteriaDescriptions?: Partial<Record<MovieCriterionKey, string>>
 }
