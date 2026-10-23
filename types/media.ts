@@ -1,4 +1,6 @@
 import { Timestamp } from "firebase/firestore";
+import type { MovieReviewProfileKey } from "@/config/movieProfile";
+import type { BookReviewProfileKey } from "@/config/bookProfile";
 
 export type MediaReviewCriteria =
     Partial<Record<string, number>>;
@@ -22,6 +24,11 @@ export type ReviewProfile =
     | "Fighting"
     | "ActionRpg"
     | "Management"
+
+export type MediaReviewProfile =
+    | ReviewProfile
+    | MovieReviewProfileKey
+    | BookReviewProfileKey;
 
 export type GameProduction = "indie" | "studio";
 
@@ -107,7 +114,7 @@ export interface MediaItemType {
 
     description?: string
     genre: string
-    reviewProfile: ReviewProfile | ""
+    reviewProfile: MediaReviewProfile | ""
     production?: GameProduction
     image: string
     country?: string
@@ -133,6 +140,7 @@ export type TvShowSeriesStatus = "ongoing" | "ended";
 export type TvShowSeason = {
     id: string;
     number: number;
+    episodeCount: number;
     starRating: number | null;
     reviewScore?: ReviewScore;
 };

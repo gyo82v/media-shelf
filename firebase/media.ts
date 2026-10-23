@@ -1,6 +1,6 @@
-import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp, addDoc } from "firebase/firestore"
+import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp, addDoc, deleteField, orderBy, runTransaction } from "firebase/firestore"
 import { db } from "./firebase"
-import type { MediaItemType, ReviewProfile, ReviewScore, GameProduction } from "@/types"
+import type { MediaItemType, ReviewProfile, ReviewScore, GameProduction, MediaReviewProfile, TvShowEpisode, TvShowSeason, TvShowSeriesStatus } from "@/types"
 import type { MovieReviewProfileKey } from "@/config/movieProfile"
 import type { BookReviewProfileKey } from "@/config/bookProfile";
 import {createSlug} from "@/lib/createSlug"
@@ -70,7 +70,7 @@ export async function getMediaById(
 
 
 type SaveMediaReviewInput = {
-    reviewProfile: ReviewProfile | MovieReviewProfileKey | BookReviewProfileKey
+    reviewProfile: MediaReviewProfile
     production?: GameProduction;
     reviewScore: ReviewScore;
     starRating: number;
@@ -109,6 +109,7 @@ export async function addMedia(
         description?: string;
         notes?: string;
         production?: "indie" | "studio"
+        seriesStatus?: TvShowSeriesStatus;
     }
 ) {
    
@@ -129,6 +130,9 @@ export async function addMedia(
         description: media.description ?? "",
         notes: media.notes ?? "",
         production: media.production ?? "",
+
+        ...(media.type === "tvShow" && media.seriesStatus
+        ? { seriesStatus: media.seriesStatus }: {}),
 
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -152,4 +156,379 @@ export async function addMedia(
     });
 
     return docRef.id;
+}
+
+const MAX_EPISODES_PER_OPERATION = 100;
+
+function getSeasonId(seasonNumber: number) {
+    return `season-${String(seasonNumber).padStart(2, "0")}`;
+}
+
+function getEpisodeId(episodeNumber: number) {
+    return `episode-${String(episodeNumber).padStart(2, "0")}`;
+}
+
+function validatePositiveInteger(value: number, label: string) {
+    if (!Number.isInteger(value) || value < 1) {
+        throw new RangeError(
+            `${label} must be a positive whole number.`
+        );
+    }
+}
+
+function validateEpisodeCount(count: number, allowZero = false) {
+    const minimum = allowZero ? 0 : 1;
+
+    if (
+        !Number.isInteger(count) ||
+        count < minimum ||
+        count > MAX_EPISODES_PER_OPERATION
+    ) {
+        throw new RangeError(
+            `Episode count must be between ${minimum} and ${MAX_EPISODES_PER_OPERATION}.`
+        );
+    }
+}
+
+function validateStarRating(rating: number) {
+    if (
+        !Number.isFinite(rating) ||
+        rating < 0 ||
+        rating > 10 ||
+        !Number.isInteger(rating * 2)
+    ) {
+        throw new RangeError(
+            "The rating must be between 0 and 10 in 0.5 increments."
+        );
+    }
+}
+
+export async function getTvShowSeasons(
+    uid: string,
+    mediaId: string
+): Promise<TvShowSeason[]> {
+    const seasonsRef = collection(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId,
+        "seasons"
+    );
+
+    const q = query(seasonsRef, orderBy("number", "asc"));
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((seasonDoc) => {
+        const data = seasonDoc.data();
+
+        return {
+            id: seasonDoc.id,
+            number: data.number,
+            episodeCount: data.episodeCount ?? 0,
+            starRating: data.starRating ?? null,
+            ...(data.reviewScore
+                ? { reviewScore: data.reviewScore as ReviewScore }
+                : {}),
+        };
+    });
+}
+
+export async function createTvShowSeason(
+    uid: string,
+    mediaId: string,
+    seasonNumber: number,
+    episodeCount: number
+): Promise<TvShowSeason> {
+    validatePositiveInteger(seasonNumber, "Season number");
+    validateEpisodeCount(episodeCount, true);
+
+    const mediaRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId
+    );
+
+    const seasonId = getSeasonId(seasonNumber);
+
+    const seasonRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId,
+        "seasons",
+        seasonId
+    );
+
+    await runTransaction(db, async (transaction) => {
+        const [mediaSnapshot, seasonSnapshot] = await Promise.all([
+            transaction.get(mediaRef),
+            transaction.get(seasonRef),
+        ]);
+
+        if (!mediaSnapshot.exists()) {
+            throw new Error("TV show not found.");
+        }
+
+        if (mediaSnapshot.data().type !== "tvShow") {
+            throw new Error("This media item is not a TV show.");
+        }
+
+        if (seasonSnapshot.exists()) {
+            throw new Error(
+                `Season ${seasonNumber} already exists.`
+            );
+        }
+
+        transaction.set(seasonRef, {
+            number: seasonNumber,
+            episodeCount,
+            starRating: null,
+        });
+
+        for (
+            let episodeNumber = 1;
+            episodeNumber <= episodeCount;
+            episodeNumber++
+        ) {
+            const episodeRef = doc(
+                db,
+                "users",
+                uid,
+                "media",
+                mediaId,
+                "seasons",
+                seasonId,
+                "episodes",
+                getEpisodeId(episodeNumber)
+            );
+
+            transaction.set(episodeRef, {
+                number: episodeNumber,
+                starRating: null,
+            });
+        }
+    });
+
+    return {
+        id: seasonId,
+        number: seasonNumber,
+        episodeCount,
+        starRating: null,
+    };
+}
+
+export async function getTvShowEpisodes(
+    uid: string,
+    mediaId: string,
+    seasonId: string
+): Promise<TvShowEpisode[]> {
+    const seasonRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId,
+        "seasons",
+        seasonId
+    );
+
+    const seasonSnapshot = await getDoc(seasonRef);
+
+    if (!seasonSnapshot.exists()) {
+        throw new Error("Season not found.");
+    }
+
+    const episodesRef = collection(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId,
+        "seasons",
+        seasonId,
+        "episodes"
+    );
+
+    const q = query(episodesRef, orderBy("number", "asc"));
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map((episodeDoc) => {
+        const data = episodeDoc.data();
+
+        return {
+            id: episodeDoc.id,
+            number: data.number,
+            starRating: data.starRating ?? null,
+        };
+    });
+}
+
+
+export async function addTvShowEpisodes(
+    uid: string,
+    mediaId: string,
+    seasonId: string,
+    additionalEpisodeCount: number
+): Promise<void> {
+    validateEpisodeCount(additionalEpisodeCount);
+
+    const mediaRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId
+    );
+
+    const seasonRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId,
+        "seasons",
+        seasonId
+    );
+
+    await runTransaction(db, async (transaction) => {
+        const [mediaSnapshot, seasonSnapshot] = await Promise.all([
+            transaction.get(mediaRef),
+            transaction.get(seasonRef),
+        ]);
+
+        if (!mediaSnapshot.exists() ||
+            mediaSnapshot.data().type !== "tvShow") {
+            throw new Error("TV show not found.");
+        }
+
+        if (!seasonSnapshot.exists()) {
+            throw new Error("Season not found.");
+        }
+
+        const currentCount =
+            seasonSnapshot.data().episodeCount ?? 0;
+
+        if (
+            !Number.isInteger(currentCount) ||
+            currentCount < 0
+        ) {
+            throw new Error(
+                "The stored episode count is invalid."
+            );
+        }
+
+        const nextCount = currentCount + additionalEpisodeCount;
+
+        for (
+            let episodeNumber = currentCount + 1;
+            episodeNumber <= nextCount;
+            episodeNumber++
+        ) {
+            const episodeRef = doc(
+                db,
+                "users",
+                uid,
+                "media",
+                mediaId,
+                "seasons",
+                seasonId,
+                "episodes",
+                getEpisodeId(episodeNumber)
+            );
+
+            transaction.set(episodeRef, {
+                number: episodeNumber,
+                starRating: null,
+            });
+        }
+
+        transaction.update(seasonRef, {
+            episodeCount: nextCount,
+        });
+    });
+}
+
+export async function saveTvShowSeasonReview(
+    uid: string,
+    mediaId: string,
+    seasonId: string,
+    data: {
+        starRating: number;
+        reviewScore: ReviewScore;
+    }
+): Promise<void> {
+    validateStarRating(data.starRating);
+
+    const seasonRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId,
+        "seasons",
+        seasonId
+    );
+
+    await updateDoc(seasonRef, {
+        starRating: data.starRating,
+        reviewScore: data.reviewScore,
+    });
+}
+
+export async function saveTvShowEpisodeRating(
+    uid: string,
+    mediaId: string,
+    seasonId: string,
+    episodeId: string,
+    starRating: number
+): Promise<void> {
+    validateStarRating(starRating);
+
+    const episodeRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId,
+        "seasons",
+        seasonId,
+        "episodes",
+        episodeId
+    );
+
+    await updateDoc(episodeRef, {
+        starRating,
+    });
+}
+
+export async function updateTvShowSeriesStatus(
+    uid: string,
+    mediaId: string,
+    seriesStatus: TvShowSeriesStatus | null
+): Promise<void> {
+    const media = await getMediaById(uid, mediaId);
+
+    if (!media || media.type !== "tvShow") {
+        throw new Error("TV show not found.");
+    }
+
+    const mediaRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId
+    );
+
+    await updateDoc(mediaRef, {
+        seriesStatus:
+            seriesStatus === null
+                ? deleteField()
+                : seriesStatus,
+        updatedAt: serverTimestamp(),
+    });
 }
