@@ -168,6 +168,7 @@ function getEpisodeId(episodeNumber: number) {
     return `episode-${String(episodeNumber).padStart(2, "0")}`;
 }
 
+////////////validation function//////////////
 function validatePositiveInteger(value: number, label: string) {
     if (!Number.isInteger(value) || value < 1) {
         throw new RangeError(
@@ -203,6 +204,8 @@ function validateStarRating(rating: number) {
     }
 }
 
+///Retrieve all seasons
+
 export async function getTvShowSeasons(
     uid: string,
     mediaId: string
@@ -233,6 +236,8 @@ export async function getTvShowSeasons(
         };
     });
 }
+
+///Create a season and its initial episodes;
 
 export async function createTvShowSeason(
     uid: string,
@@ -321,6 +326,8 @@ export async function createTvShowSeason(
     };
 }
 
+///Retireve a season episodes;
+
 export async function getTvShowEpisodes(
     uid: string,
     mediaId: string,
@@ -366,6 +373,8 @@ export async function getTvShowEpisodes(
         };
     });
 }
+
+///add extra episodes to an existing season
 
 
 export async function addTvShowEpisodes(
@@ -452,6 +461,8 @@ export async function addTvShowEpisodes(
     });
 }
 
+///Save a season detailed review;
+
 export async function saveTvShowSeasonReview(
     uid: string,
     mediaId: string,
@@ -479,6 +490,8 @@ export async function saveTvShowSeasonReview(
     });
 }
 
+///Save an episode star rating;
+
 export async function saveTvShowEpisodeRating(
     uid: string,
     mediaId: string,
@@ -504,6 +517,9 @@ export async function saveTvShowEpisodeRating(
         starRating,
     });
 }
+
+
+///Update the tvShow status "ongoing" | "ended";
 
 export async function updateTvShowSeriesStatus(
     uid: string,

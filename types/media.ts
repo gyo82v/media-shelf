@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import type { MovieReviewProfileKey } from "@/config/movieProfile";
 import type { BookReviewProfileKey } from "@/config/bookProfile";
+import type {TvShowReviewProfileKey} from "@/config/tvShowProfile";
 
 export type MediaReviewCriteria =
     Partial<Record<string, number>>;
@@ -28,7 +29,8 @@ export type ReviewProfile =
 export type MediaReviewProfile =
     | ReviewProfile
     | MovieReviewProfileKey
-    | BookReviewProfileKey;
+    | BookReviewProfileKey
+    | TvShowReviewProfileKey
 
 export type GameProduction = "indie" | "studio";
 
