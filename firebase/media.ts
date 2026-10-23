@@ -3,6 +3,7 @@ import { db } from "./firebase"
 import type { MediaItemType, ReviewProfile, ReviewScore, GameProduction, MediaReviewProfile, TvShowEpisode, TvShowSeason, TvShowSeriesStatus } from "@/types"
 import type { MovieReviewProfileKey } from "@/config/movieProfile"
 import type { BookReviewProfileKey } from "@/config/bookProfile";
+import type { TvShowReviewProfileKey } from "@/config/tvShowProfile";
 import {createSlug} from "@/lib/createSlug"
 
 export async function getMediaByStatus(
@@ -70,13 +71,14 @@ export async function getMediaById(
 
 
 type SaveMediaReviewInput = {
-    reviewProfile: MediaReviewProfile
+    reviewProfile: MediaReviewProfile;
     production?: GameProduction;
     reviewScore: ReviewScore;
     starRating: number;
+    markCompleted?: boolean;
 };
 
-
+/*
 export async function saveMediaReview(
     uid: string,
     mediaId: string,
@@ -93,6 +95,62 @@ export async function saveMediaReview(
         reviewScore: data.reviewScore,
         updatedAt: serverTimestamp(),
         status: "completed"
+    });
+}
+*/
+
+export async function saveMediaReview(
+    uid: string,
+    mediaId: string,
+    data: SaveMediaReviewInput
+): Promise<void> {
+    const mediaRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId
+    );
+
+    await updateDoc(mediaRef, {
+        reviewProfile: data.reviewProfile,
+        ...(data.production
+            ? { production: data.production }
+            : {}),
+        starRating: data.starRating,
+        reviewScore: data.reviewScore,
+        updatedAt: serverTimestamp(),
+        ...(data.markCompleted === false
+            ? {}
+            : { status: "completed" }),
+    });
+}
+
+export async function saveTvShowReviewProfile(
+    uid: string,
+    mediaId: string,
+    reviewProfile: TvShowReviewProfileKey
+): Promise<void> {
+    const mediaRef = doc(
+        db,
+        "users",
+        uid,
+        "media",
+        mediaId
+    );
+
+    const snapshot = await getDoc(mediaRef);
+
+    if (
+        !snapshot.exists() ||
+        snapshot.data().type !== "tvShow"
+    ) {
+        throw new Error("TV show not found.");
+    }
+
+    await updateDoc(mediaRef, {
+        reviewProfile,
+        updatedAt: serverTimestamp(),
     });
 }
 
