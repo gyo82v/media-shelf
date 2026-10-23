@@ -1,5 +1,5 @@
 import {useAuth} from "@/providers/AuthProvider"
-import {addMedia} from "@/firebase/profile" 
+import {addMedia} from "@/firebase/media" 
 import Button from "./ui/Button"
 import Formfield from "./ui/form/FormField"
 import FormTextArea from "./ui/form/FormTextArea"

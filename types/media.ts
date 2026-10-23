@@ -119,9 +119,26 @@ export interface MediaItemType {
 
     reviewScore?: ReviewScore
 
+    seriesStatus?: TvShowSeriesStatus;
+
     seasons?: {
         number: number
         starRating: number | null
         reviewScore?: ReviewScore
     }[]
 }
+
+export type TvShowSeriesStatus = "ongoing" | "ended";
+
+export type TvShowSeason = {
+    id: string;
+    number: number;
+    starRating: number | null;
+    reviewScore?: ReviewScore;
+};
+
+export type TvShowEpisode = {
+    id: string;
+    number: number;
+    starRating: number | null;
+};

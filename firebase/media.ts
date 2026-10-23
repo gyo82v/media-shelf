@@ -1,8 +1,9 @@
-import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore"
+import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp, addDoc } from "firebase/firestore"
 import { db } from "./firebase"
 import type { MediaItemType, ReviewProfile, ReviewScore, GameProduction } from "@/types"
 import type { MovieReviewProfileKey } from "@/config/movieProfile"
 import type { BookReviewProfileKey } from "@/config/bookProfile";
+import {createSlug} from "@/lib/createSlug"
 
 export async function getMediaByStatus(
     uid: string,
@@ -93,4 +94,62 @@ export async function saveMediaReview(
         updatedAt: serverTimestamp(),
         status: "completed"
     });
+}
+
+export async function addMedia(
+    uid: string,
+    media: {
+        name: string;
+        type: "movie" | "book" | "game" | "tvShow";
+        status: "inProgress" | "wishList" | "completed";
+        genre: string;
+        reviewProfile?: string;
+        country?: string;
+        year?: number | null
+        description?: string;
+        notes?: string;
+        production?: "indie" | "studio"
+    }
+) {
+   
+    const mediaRef = collection(db, "users", uid, "media");
+    const slug = `${createSlug(media.name)}-${media.type}`;
+
+    const docRef = await addDoc(mediaRef, {
+        name: media.name,
+        type: media.type,
+        status: media.status,
+        slug: slug,
+
+        genre: media.genre,
+        reviewProfile: media.reviewProfile,
+
+        country: media.country ?? "",
+        year: media.year ?? "",
+        description: media.description ?? "",
+        notes: media.notes ?? "",
+        production: media.production ?? "",
+
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+
+        startedAt: media.status === "inProgress"
+            ? serverTimestamp()
+            : null,
+
+        finishedAt: null,
+
+        image: "",
+
+        starRating: null,
+
+        reviewScore: {
+            criteria: {},
+            modifiers: {},
+            baseScore: null,
+            totalScore: null
+        },
+    });
+
+    return docRef.id;
 }
