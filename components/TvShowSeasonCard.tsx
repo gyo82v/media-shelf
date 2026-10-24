@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 
-import StarRating from "@/components/StarRating";
-import StarRatingInput from "@/components/review/StarRatingInput";
+import StarRatingInput from "./review/StarRatingInput";
 import TvShowReviewEditorForm from "@/components/review/tvShow/TvShowReviewEditorForm";
 
 import {
@@ -12,6 +11,7 @@ import {
     saveTvShowEpisodeRating,
     saveTvShowSeasonReview,
 } from "@/firebase/media";
+
 
 import {
     calculateTvShowReviewScore,
@@ -54,23 +54,15 @@ export default function TvShowSeasonCard({
     const [episodes, setEpisodes] = useState<TvShowEpisode[]>([]);
     const [episodesLoading, setEpisodesLoading] = useState(false);
 
-    const [editingEpisodeId, setEditingEpisodeId] =
-        useState<string | null>(null);
-
     const [showAddEpisodes, setShowAddEpisodes] = useState(false);
     const [showSeasonReview, setShowSeasonReview] = useState(false);
 
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
 
-    const editingEpisode = episodes.find(
-        (episode) => episode.id === editingEpisodeId
-    );
-
     const handleToggleSeason = async () => {
         if (expanded) {
             setExpanded(false);
-            setEditingEpisodeId(null);
             setShowSeasonReview(false);
             setShowAddEpisodes(false);
             return;
@@ -107,6 +99,7 @@ export default function TvShowSeasonCard({
 
         const form = e.currentTarget;
         const formData = new FormData(form);
+
         const count = Number(formData.get("episodeCount"));
 
         if (
@@ -140,7 +133,7 @@ export default function TvShowSeasonCard({
 
             onEpisodeCountChange(
                 season.id,
-                season.episodeCount + count
+                updatedEpisodes.length
             );
 
             form.reset();
@@ -156,69 +149,64 @@ export default function TvShowSeasonCard({
         }
     };
 
-    const handleSaveEpisodeRating = async (
-        e: React.SyntheticEvent<HTMLFormElement>
-    ) => {
-        e.preventDefault();
-        setError("");
+    const handleEpisodeRatingChange = async (
+    episode: TvShowEpisode,
+    starRating: number
+) => {
+    if (
+        !Number.isFinite(starRating) ||
+        starRating < 0 ||
+        starRating > 10 ||
+        !Number.isInteger(starRating * 2)
+    ) {
+        setError(
+            "The rating must be between 0 and 10 in 0.5 increments."
+        );
+        return;
+    }
 
-        if (!editingEpisode) {
-            setError("Please select an episode.");
-            return;
-        }
+    const previousRating = episode.starRating;
 
-        const formData = new FormData(e.currentTarget);
-        const rawRating = formData.get("starRating");
+    setError("");
+    setSaving(true);
 
-        if (typeof rawRating !== "string" || rawRating === "") {
-            setError("Please select an episode rating.");
-            return;
-        }
+    setEpisodes((current) =>
+        current.map((item) =>
+            item.id === episode.id
+                ? { ...item, starRating }
+                : item
+        )
+    );
 
-        const starRating = Number(rawRating);
+    try {
+        await saveTvShowEpisodeRating(
+            uid,
+            mediaId,
+            season.id,
+            episode.id,
+            starRating
+        );
+    } catch (err) {
+        setEpisodes((current) =>
+            current.map((item) =>
+                item.id === episode.id
+                    ? {
+                          ...item,
+                          starRating: previousRating,
+                      }
+                    : item
+            )
+        );
 
-        if (
-            !Number.isFinite(starRating) ||
-            starRating < 0 ||
-            starRating > 10 ||
-            !Number.isInteger(starRating * 2)
-        ) {
-            setError(
-                "The rating must be between 0 and 10 in 0.5 increments."
-            );
-            return;
-        }
-
-        setSaving(true);
-
-        try {
-            await saveTvShowEpisodeRating(
-                uid,
-                mediaId,
-                season.id,
-                editingEpisode.id,
-                starRating
-            );
-
-            setEpisodes((current) =>
-                current.map((episode) =>
-                    episode.id === editingEpisode.id
-                        ? { ...episode, starRating }
-                        : episode
-                )
-            );
-
-            setEditingEpisodeId(null);
-        } catch (err) {
-            setError(
-                err instanceof Error
-                    ? err.message
-                    : "Failed to save episode rating."
-            );
-        } finally {
-            setSaving(false);
-        }
-    };
+        setError(
+            err instanceof Error
+                ? err.message
+                : "Failed to save episode rating."
+        );
+    } finally {
+        setSaving(false);
+    }
+};
 
     const handleSaveSeasonReview = async ({
         starRating,
@@ -239,7 +227,9 @@ export default function TvShowSeasonCard({
         );
 
         if (result.totalScore === null) {
-            throw new Error("Please complete all review criteria.");
+            throw new Error(
+                "Please complete all review criteria."
+            );
         }
 
         setSaving(true);
@@ -269,6 +259,7 @@ export default function TvShowSeasonCard({
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
+            {/* Season summary */}
             <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h3 className="font-semibold text-neutral-900 dark:text-white">
@@ -323,6 +314,7 @@ export default function TvShowSeasonCard({
                 </div>
             </div>
 
+            {/* Expanded season content */}
             {expanded && (
                 <div className="flex flex-col gap-5 border-t border-neutral-200 p-4 dark:border-neutral-800">
                     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -336,7 +328,6 @@ export default function TvShowSeasonCard({
                                 disabled={saving}
                                 onClick={() => {
                                     setShowAddEpisodes((current) => !current);
-                                    setEditingEpisodeId(null);
                                     setShowSeasonReview(false);
                                     setError("");
                                 }}
@@ -352,7 +343,6 @@ export default function TvShowSeasonCard({
                                 disabled={saving || !reviewProfile}
                                 onClick={() => {
                                     setShowSeasonReview((current) => !current);
-                                    setEditingEpisodeId(null);
                                     setShowAddEpisodes(false);
                                     setError("");
                                 }}
@@ -370,11 +360,12 @@ export default function TvShowSeasonCard({
                     {!reviewProfile && (
                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
                             Select the TV show review profile before
-                            reviewing seasons. Episode ratings are
+                            reviewing seasons. Episode ratings remain
                             available without it.
                         </p>
                     )}
 
+                    {/* Add more episodes */}
                     {showAddEpisodes && (
                         <form
                             className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
@@ -410,6 +401,7 @@ export default function TvShowSeasonCard({
                         </form>
                     )}
 
+                    {/* Detailed season review */}
                     {showSeasonReview && reviewProfile && (
                         <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
                             <h4 className="mb-4 font-semibold text-neutral-900 dark:text-white">
@@ -432,96 +424,48 @@ export default function TvShowSeasonCard({
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                        {episodes.map((episode) => (
-                            <button
-                                key={episode.id}
-                                type="button"
-                                disabled={saving}
-                                onClick={() => {
-                                    setEditingEpisodeId(episode.id);
-                                    setShowSeasonReview(false);
-                                    setShowAddEpisodes(false);
-                                    setError("");
-                                }}
-                                className={`flex min-h-20 flex-col items-start justify-between gap-2 rounded-lg border p-3 text-left transition ${
-                                    editingEpisodeId === episode.id
-                                        ? "border-neutral-500 bg-neutral-100 dark:bg-neutral-800"
-                                        : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/50"
-                                }`}
-                            >
-                                <span className="text-sm font-medium text-neutral-900 dark:text-white">
-                                    Episode {episode.number}
-                                </span>
+                    {/* Episodes with inline rating selectors */}
+                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    {episodes.map((episode) => (
+        <div
+            key={episode.id}
+            className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-3 dark:border-neutral-800"
+        >
+            <span className="text-sm font-medium text-neutral-900 dark:text-white">
+                Episode {episode.number}
+            </span>
 
-                                {episode.starRating !== null ? (
-                                    <span className="flex items-center gap-2">
-                                        <StarRating rating={episode.starRating} />
-                                        <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                            {episode.starRating}/10
-                                        </span>
-                                    </span>
-                                ) : (
-                                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                                        Not rated
-                                    </span>
-                                )}
-                            </button>
-                        ))}
-                    </div>
+            <StarRatingInput
+                name={`episode-rating-${season.id}-${episode.id}`}
+                value={episode.starRating}
+                onChange={(rating) => {
+                    void handleEpisodeRatingChange(
+                        episode,
+                        rating
+                    );
+                }}
+                label={`Episode ${episode.number} rating`}
+                compact
+                required={false}
+                disabled={saving}
+            />
+        </div>
+    ))}
+</div>
 
                     {episodes.length === 0 && (
                         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                            No episodes yet. Add episodes to this season
-                            when you&apos;re ready.
+                            No episodes yet. Add episodes to this
+                            season when you&apos;re ready.
                         </p>
                     )}
 
-                    {editingEpisode && (
-                        <form
-                            key={editingEpisode.id}
-                            className="flex flex-col gap-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
-                            onSubmit={handleSaveEpisodeRating}
-                        >
-                            <div>
-                                <h4 className="font-semibold text-neutral-900 dark:text-white">
-                                    Episode {editingEpisode.number}
-                                </h4>
-
-                                <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                                    Choose a rating from 0 to 10.
-                                </p>
-                            </div>
-
-                            <StarRatingInput
-                                name="starRating"
-                                defaultValue={editingEpisode.starRating}
-                                disabled={saving}
-                            />
-
-                            <div className="flex flex-wrap gap-3">
-                                <button
-                                    type="submit"
-                                    disabled={saving}
-                                    className="rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:opacity-50 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-300"
-                                >
-                                    {saving ? "Saving..." : "Save rating"}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    disabled={saving}
-                                    onClick={() => setEditingEpisodeId(null)}
-                                    className="rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    )}
-
+                    {/* Error message */}
                     {error && (
-                        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                        <p
+                            role="alert"
+                            className="text-sm text-red-600 dark:text-red-400"
+                        >
                             {error}
                         </p>
                     )}

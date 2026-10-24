@@ -1,16 +1,19 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
-// Adjust this import to match your existing StarRating component.
 import StarRating from "@/components/StarRating";
 
 type Props = {
     name?: string;
     defaultValue?: number | null;
+    value?: number | null;
+    onChange?: (value: number) => void;
     disabled?: boolean;
     required?: boolean;
+    label?: string;
+    description?: string;
+    compact?: boolean;
 };
 
 const ratings = Array.from(
@@ -37,16 +40,31 @@ function formatRating(value: number) {
 export default function StarRatingInput({
     name = "starRating",
     defaultValue = null,
+    value,
+    onChange,
     disabled = false,
     required = true,
+    label = "Overall Rating",
+    description =
+        "Your personal rating, independent of the detailed review.",
+    compact = false,
 }: Props) {
+    // Controlled mode is enabled when the value prop is provided,
+    // including when its value is null.
+    const isControlled = value !== undefined;
+
     const initialRating = isValidRating(defaultValue)
         ? defaultValue
         : null;
 
-    const [rating, setRating] = useState<number | null>(
-        initialRating
-    );
+    const [internalRating, setInternalRating] =
+        useState<number | null>(initialRating);
+
+    const rating = isControlled
+        ? isValidRating(value)
+            ? value
+            : null
+        : internalRating;
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -94,7 +112,9 @@ export default function StarRatingInput({
         };
     }, [isOpen]);
 
-    const openDropdown = (direction: "first" | "last" | "selected") => {
+    const openDropdown = (
+        direction: "first" | "last" | "selected"
+    ) => {
         const selectedIndex =
             rating === null ? 0 : ratings.indexOf(rating);
 
@@ -111,9 +131,14 @@ export default function StarRatingInput({
         setIsOpen(true);
     };
 
-    const selectRating = (value: number) => {
-        setRating(value);
-        setActiveIndex(ratings.indexOf(value));
+    const selectRating = (selectedRating: number) => {
+        if (!isControlled) {
+            setInternalRating(selectedRating);
+        }
+
+        onChange?.(selectedRating);
+
+        setActiveIndex(ratings.indexOf(selectedRating));
         setIsOpen(false);
         triggerRef.current?.focus();
     };
@@ -124,10 +149,10 @@ export default function StarRatingInput({
         if (disabled) return;
 
         if (!isOpen) {
-            if (event.key === "ArrowDown") {
-                event.preventDefault();
-                openDropdown("selected");
-            } else if (event.key === "ArrowUp") {
+            if (
+                event.key === "ArrowDown" ||
+                event.key === "ArrowUp"
+            ) {
                 event.preventDefault();
                 openDropdown("selected");
             } else if (event.key === "Home") {
@@ -176,19 +201,30 @@ export default function StarRatingInput({
     return (
         <fieldset
             disabled={disabled}
-            className="flex min-w-0 flex-col gap-3"
+            className={`flex min-w-0 flex-col ${
+                compact ? "gap-1" : "gap-3"
+            }`}
         >
-            <legend className="font-semibold text-slate-800 dark:text-slate-100">
-                Overall Rating{required ? " *" : ""}
-            </legend>
+            {!compact && (
+                <>
+                    <legend className="font-semibold text-slate-800 dark:text-slate-100">
+                        {label}
+                        {required ? " *" : ""}
+                    </legend>
 
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-                Your personal rating, independent of the detailed review.
-            </p>
+                    {description && (
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                            {description}
+                        </p>
+                    )}
+                </>
+            )}
 
             <div
                 ref={containerRef}
-                className="relative w-full max-w-sm"
+                className={`relative w-full ${
+                    compact ? "" : "max-w-sm"
+                }`}
             >
                 <button
                     ref={triggerRef}
@@ -196,8 +232,8 @@ export default function StarRatingInput({
                     disabled={disabled}
                     aria-label={
                         rating === null
-                            ? "Select overall rating"
-                            : `Overall rating ${rating} out of 10`
+                            ? `Select ${label.toLowerCase()}`
+                            : `${label} ${rating} out of 10`
                     }
                     aria-haspopup="listbox"
                     aria-expanded={isOpen}
@@ -210,11 +246,10 @@ export default function StarRatingInput({
                         }
                     }}
                     onKeyDown={handleTriggerKeyDown}
-                    className="
-                        flex min-h-14 w-full items-center justify-between
-                        gap-3 rounded-lg border border-slate-300
-                        bg-white px-3 py-2 text-left
-                        transition-colors
+                    className={`
+                        flex w-full items-center justify-between
+                        rounded-lg border border-slate-300
+                        bg-white text-left transition-colors
                         hover:border-teal-600
                         focus-visible:outline-2
                         focus-visible:outline-offset-2
@@ -222,19 +257,27 @@ export default function StarRatingInput({
                         disabled:cursor-not-allowed disabled:opacity-50
                         dark:border-slate-700 dark:bg-slate-900
                         dark:hover:border-teal-500
-                    "
+                        ${
+                            compact
+                                ? "min-h-11 gap-2 px-2 py-2"
+                                : "min-h-14 gap-3 px-3 py-2"
+                        }
+                    `}
                 >
                     {rating === null ? (
-                        <span className="text-sm text-slate-500 dark:text-slate-400">
+                        <span className="min-w-0 truncate text-sm text-slate-500 dark:text-slate-400">
                             Select rating
                         </span>
                     ) : (
-                        <span className="flex min-w-0 items-center gap-3">
-                            <span aria-hidden="true">
+                        <span className="flex min-w-0 items-center gap-2">
+                            <span
+                                aria-hidden="true"
+                                className="shrink-0"
+                            >
                                 <StarRating rating={rating} />
                             </span>
 
-                            <span className="whitespace-nowrap font-medium tabular-nums text-slate-800 dark:text-slate-100">
+                            <span className="whitespace-nowrap text-sm font-medium tabular-nums text-slate-800 dark:text-slate-100">
                                 {formatRating(rating)}
                             </span>
                         </span>
@@ -272,13 +315,13 @@ export default function StarRatingInput({
                             dark:border-slate-700 dark:bg-slate-900
                         "
                     >
-                        {ratings.map((value, index) => {
-                            const selected = rating === value;
+                        {ratings.map((optionRating, index) => {
+                            const selected = rating === optionRating;
                             const active = activeIndex === index;
 
                             return (
                                 <button
-                                    key={value}
+                                    key={optionRating}
                                     ref={(element) => {
                                         optionRefs.current[index] = element;
                                     }}
@@ -287,7 +330,9 @@ export default function StarRatingInput({
                                     role="option"
                                     aria-selected={selected}
                                     tabIndex={-1}
-                                    onClick={() => selectRating(value)}
+                                    onClick={() =>
+                                        selectRating(optionRating)
+                                    }
                                     onKeyDown={handleOptionKeyDown}
                                     onMouseEnter={() =>
                                         setActiveIndex(index)
@@ -309,7 +354,9 @@ export default function StarRatingInput({
                                         }
                                     `}
                                 >
-                                    <span>{formatRating(value)}</span>
+                                    <span>
+                                        {formatRating(optionRating)}
+                                    </span>
 
                                     {selected && (
                                         <span
@@ -326,16 +373,18 @@ export default function StarRatingInput({
                 )}
             </div>
 
-            {/* The selected value is still submitted through FormData. */}
+            {/* Preserve FormData support for existing review forms. */}
             <input
                 type="hidden"
                 name={name}
                 value={rating === null ? "" : String(rating)}
             />
 
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-                Choose from 0 to 10 in increments of 0.5.
-            </p>
+            {!compact && (
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Choose from 0 to 10 in increments of 0.5.
+                </p>
+            )}
         </fieldset>
     );
 }
@@ -351,7 +400,7 @@ export default function StarRatingInput({
 
 import { useEffect, useRef, useState } from "react";
 
-// Adjust this import to match your existing StarRating component.
+
 import StarRating from "@/components/StarRating";
 
 type Props = {
@@ -407,19 +456,6 @@ export default function StarRatingInput({
     const containerRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-    // Keep the initial selection in sync if a different saved rating
-    // is loaded into this component.
-    useEffect(() => {
-        const nextRating = isValidRating(defaultValue)
-            ? defaultValue
-            : null;
-
-        setRating(nextRating);
-        setActiveIndex(
-            nextRating === null ? 0 : ratings.indexOf(nextRating)
-        );
-    }, [defaultValue]);
 
     // Move keyboard focus to the active option when the dropdown opens
     // or the user navigates between options.
@@ -563,7 +599,6 @@ export default function StarRatingInput({
                     aria-haspopup="listbox"
                     aria-expanded={isOpen}
                     aria-controls={`${name}-options`}
-                    aria-required={required}
                     onClick={() => {
                         if (isOpen) {
                             setIsOpen(false);
@@ -701,6 +736,7 @@ export default function StarRatingInput({
         </fieldset>
     );
 }
+
 
 
 
