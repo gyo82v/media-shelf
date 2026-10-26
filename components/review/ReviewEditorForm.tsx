@@ -12,7 +12,7 @@ import {
 import Button from "@/components/ui/Button";
 import ReviewFields from "@/components/review/ReviewFields";
 import ReviewProgress from "@/components/review/ReviewProgress";
-import GameReviewScorePreview from "@/components/review/GameReviewScorePreview";
+import GameReviewScorePreview from "@/components/review/game/GameReviewScorePreview";
 import StarRatingInput from "@/components/review/StarRatingInput";
 
 import { reviewProfileConfigs } from "@/config/reviewProfiles";

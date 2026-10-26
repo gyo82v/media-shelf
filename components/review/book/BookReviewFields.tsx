@@ -1,26 +1,30 @@
-import GradeSelector from "./GradeSelector";
+import GradeSelector from "../GradeSelector";
 
-import { movieReviewCriteria } from "@/config/movieReviewCriteria";
-import { movieProfileConfigs } from "@/config/movieProfile";
+import { bookCriteria } from "@/config/bookCriteria";
+import {
+    bookProfileConfigs,
+    type BookProfileConfig,
+    type BookReviewProfileKey,
+} from "@/config/bookProfile";
 
-import type { MovieCriterionKey } from "@/config/movieReviewCriteria";
-import type { MovieReviewProfileKey, MovieProfileConfig } from "@/config/movieProfile";
+import type { BookCriterionKey } from "@/config/bookCriteria";
 
 type Props = {
-    reviewProfile: MovieReviewProfileKey;
-    criteria?: Partial<Record<MovieCriterionKey, number>>;
+    reviewProfile: BookReviewProfileKey;
+    criteria?: Partial<Record<BookCriterionKey, number>>;
     disabled?: boolean;
 };
 
-export default function MovieReviewFields({
+export default function BookReviewFields({
     reviewProfile,
     criteria = {},
     disabled = false,
 }: Props) {
-    const config: MovieProfileConfig = movieProfileConfigs[reviewProfile]
+    const config: BookProfileConfig =
+        bookProfileConfigs[reviewProfile];
 
     const activeCriteria = (
-        Object.keys(config.criteriaWeights) as MovieCriterionKey[]
+        Object.keys(config.criteriaWeights) as BookCriterionKey[]
     ).filter(
         (criterion) => config.criteriaWeights[criterion] > 0
     );
@@ -34,17 +38,16 @@ export default function MovieReviewFields({
 
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                     Grade each criterion from 0 to 10.
-                    Each criterion contributes to your movie score.
+                    Each criterion contributes to your book score.
                 </p>
             </div>
 
             <div className="flex flex-col gap-6">
                 {activeCriteria.map((criterion) => {
-                    const criterionInfo =
-                        movieReviewCriteria[criterion];
+                    const criterionInfo = bookCriteria[criterion];
 
                     const description =
-                        config.criteriaDescriptions?.[criterion] ??
+                        config.criteriaDescription?.[criterion] ??
                         criterionInfo.description;
 
                     return (

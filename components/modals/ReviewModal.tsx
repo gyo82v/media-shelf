@@ -9,11 +9,11 @@ import Button from "@/components/ui/Button";
 import ReviewSetupForm from "@/components/review/ReviewSetupForm";
 import ReviewEditorForm from "@/components/review/ReviewEditorForm";
 
-import MovieReviewSetupForm from "@/components/review/MovieReviewSetupForm";
-import MovieReviewEditorForm from "@/components/review/MovieReviewEditorForm";
+import MovieReviewSetupForm from "@/components/review/movie/MovieReviewSetupForm";
+import MovieReviewEditorForm from "@/components/review/movie/MovieReviewEditorForm";
 
-import BookReviewSetupForm from "@/components/review/BookReviewSetupForm";
-import BookReviewEditorForm from "@/components/review/BookReviewEditorForm";
+import BookReviewSetupForm from "@/components/review/book/BookReviewSetupForm";
+import BookReviewEditorForm from "@/components/review/book/BookReviewEditorForm";
 
 import TvShowReviewSetupForm from "@/components/review/tvShow/TvShowReviewSetupForm";
 import TvShowReviewEditorForm from "@/components/review/tvShow/TvShowReviewEditorForm";

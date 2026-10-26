@@ -1,30 +1,26 @@
-import GradeSelector from "./GradeSelector";
+import GradeSelector from "../GradeSelector";
 
-import { bookCriteria } from "@/config/bookCriteria";
-import {
-    bookProfileConfigs,
-    type BookProfileConfig,
-    type BookReviewProfileKey,
-} from "@/config/bookProfile";
+import { movieReviewCriteria } from "@/config/movieReviewCriteria";
+import { movieProfileConfigs } from "@/config/movieProfile";
 
-import type { BookCriterionKey } from "@/config/bookCriteria";
+import type { MovieCriterionKey } from "@/config/movieReviewCriteria";
+import type { MovieReviewProfileKey, MovieProfileConfig } from "@/config/movieProfile";
 
 type Props = {
-    reviewProfile: BookReviewProfileKey;
-    criteria?: Partial<Record<BookCriterionKey, number>>;
+    reviewProfile: MovieReviewProfileKey;
+    criteria?: Partial<Record<MovieCriterionKey, number>>;
     disabled?: boolean;
 };
 
-export default function BookReviewFields({
+export default function MovieReviewFields({
     reviewProfile,
     criteria = {},
     disabled = false,
 }: Props) {
-    const config: BookProfileConfig =
-        bookProfileConfigs[reviewProfile];
+    const config: MovieProfileConfig = movieProfileConfigs[reviewProfile]
 
     const activeCriteria = (
-        Object.keys(config.criteriaWeights) as BookCriterionKey[]
+        Object.keys(config.criteriaWeights) as MovieCriterionKey[]
     ).filter(
         (criterion) => config.criteriaWeights[criterion] > 0
     );
@@ -38,16 +34,17 @@ export default function BookReviewFields({
 
                 <p className="text-sm text-slate-500 dark:text-slate-400">
                     Grade each criterion from 0 to 10.
-                    Each criterion contributes to your book score.
+                    Each criterion contributes to your movie score.
                 </p>
             </div>
 
             <div className="flex flex-col gap-6">
                 {activeCriteria.map((criterion) => {
-                    const criterionInfo = bookCriteria[criterion];
+                    const criterionInfo =
+                        movieReviewCriteria[criterion];
 
                     const description =
-                        config.criteriaDescription?.[criterion] ??
+                        config.criteriaDescriptions?.[criterion] ??
                         criterionInfo.description;
 
                     return (

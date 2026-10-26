@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import Button from "@/components/ui/Button";
-import MovieReviewFields from "@/components/review/MovieReviewFields";
+import MovieReviewFields from "@/components/review/movie/MovieReviewFields";
 import ReviewProgress from "@/components/review/ReviewProgress";
 import ReviewScorePreview from "@/components/review/ReviewScorePreview";
 import StarRatingInput from "@/components/review/StarRatingInput";
