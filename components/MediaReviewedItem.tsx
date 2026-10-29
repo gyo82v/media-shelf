@@ -7,8 +7,7 @@ import { imageMap } from "@/data/imageMap"
 import StarRating from "./StarRating"
 
 export default function MediaReviewedItem({ item }: { item: MediaItemType }) {
-
-    console.log("item reviewd: ", item)
+    console.log("media item: ", item)
     return (
         <article className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
             <Link

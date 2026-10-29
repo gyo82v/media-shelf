@@ -8,6 +8,7 @@ import {formatDate} from "@/lib/formatDate";
 
 import { imageMap } from "@/data/imageMap";
 import StarRating from "@/components/StarRating";
+import DetailedReview from "./DetailedReview";
 
 type Props = {
     mediaItem: MediaItemType | null;
@@ -229,14 +230,10 @@ export default function MediaItemCard({ mediaItem }: Props) {
             {/* Detailed review */}
             <details className="border-t border-neutral-200 dark:border-neutral-800">
                 <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-neutral-900 transition hover:bg-neutral-50 md:px-7 dark:text-white dark:hover:bg-neutral-800/50">
-                    Review
+                    Review 
                 </summary>
 
-                <div className="border-t border-neutral-200 px-5 py-5 dark:border-neutral-800 md:px-7">
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                        No detailed review has been added yet.
-                    </p>
-                </div>
+                <DetailedReview item={mediaItem} />
             </details>
 
         </article>
