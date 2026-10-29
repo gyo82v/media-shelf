@@ -12,6 +12,13 @@ function formatCriterionName(name: string) {
 }
 
 export default function DetailedReview({ item }: Props) {
+    if (!item?.reviewScore?.totalScore) {
+        return (
+            <p className="px-5 py-5 text-sm text-neutral-500 dark:text-neutral-400 md:px-7">
+                No review yet.
+            </p>
+        );
+    }
     const reviewScore = item?.reviewScore;
     const criteria = reviewScore?.criteria ?? {};
     const modifiers = reviewScore?.modifiers;
@@ -117,65 +124,3 @@ export default function DetailedReview({ item }: Props) {
         </section>
     );
 }
-
-
-
-/*
-
-import type { MediaItemType } from "@/types";
-
-type Props = {
-    item: MediaItemType | null
-}
-
-export default function DetailedReview({item}:Props){
-    console.log("detailed review item:", item)
-    return(
-        <section className={`border-t border-neutral-200 px-5 py-5 dark:border-neutral-800 md:px-7`}>
-            <h2 className="font-semibold">Score details:</h2>
-            <div>
-                <p>Criteria:</p>
-                <div className="grid grid-cols-2 gap-x-6 gap-y-2 md:grid-cols-3">
-                  {Object.entries(item?.reviewScore?.criteria ?? {}).map(([criterion, score]) => (
-                    <div
-                      key={criterion}
-                      className="flex items-center justify-between gap-3"
-                     >
-                        <span className="text-sm text-neutral-500 dark:text-neutral-400">
-                          {criterion}
-                        </span>
-
-                        <span className="font-medium tabular-nums">
-                          {score}/10
-                        </span>
-                    </div>
-                  ))}
-                </div>
-            </div>
-            {item?.type === "game" &&
-              <div>
-                <h3>Modifiers:</h3>
-                <div className="flex gap-4">
-                    <div>
-                      <p>Bugs: -{item?.reviewScore?.modifiers.bugs}</p>
-                      <p>Monetization: -{item?.reviewScore?.modifiers.monetization}</p>
-                      <p>Grind: -{item?.reviewScore?.modifiers.grind}</p>
-                    </div>
-                    <div>
-                      <p>Price value: +{item?.reviewScore?.modifiers?.priceValue}</p>
-                      <p>Originality: +{item?.reviewScore?.modifiers?.originality}</p>
-                    </div>
-                </div>
-              </div> 
-            }
-            <p>Base Score: {item?.reviewScore?.baseScore}</p>
-            <p>Final Score: {item?.reviewScore?.totalScore}</p>
-        </section>
-    )
-}
-
-
-
-
-
-*/
