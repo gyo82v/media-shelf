@@ -11,8 +11,8 @@ export default function Header(){
             <div className="text-2xl font-bold">
                 Media Shelf
             </div>
-            {user && profile && <UserSection profile={profile} />}
             {user && <Navbar navItems={["home", "media","in-progress","wishlist"]}/>}
+            {user && profile && <UserSection profile={profile} />}
         </header>
     )
 }
