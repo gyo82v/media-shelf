@@ -152,3 +152,28 @@ export type TvShowEpisode = {
     number: number;
     starRating: number | null;
 };
+
+export type DashboardStats = {
+    total: number,
+    inProgress: {
+        total: number,
+        movies: number,
+        tvShows: number,
+        games: number,
+        books: number
+    },
+    wishList: {
+        total: number,
+        movies: number,
+        tvShows: number,
+        games: number,
+        books: number
+    },
+    completed: {
+        total: number,
+        movies: number,
+        tvShows: number,
+        games: number,
+        books: number
+    }
+}
