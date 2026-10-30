@@ -1,8 +1,6 @@
 import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp, addDoc, deleteField, orderBy, runTransaction } from "firebase/firestore"
 import { db } from "./firebase"
-import type { MediaItemType, ReviewProfile, ReviewScore, GameProduction, MediaReviewProfile, TvShowEpisode, TvShowSeason, TvShowSeriesStatus } from "@/types"
-import type { MovieReviewProfileKey } from "@/config/movieProfile"
-import type { BookReviewProfileKey } from "@/config/bookProfile";
+import type { MediaItemType, ReviewScore, GameProduction, MediaReviewProfile, TvShowEpisode, TvShowSeason, TvShowSeriesStatus } from "@/types"
 import type { TvShowReviewProfileKey } from "@/config/tvShowProfile";
 import {createSlug} from "@/lib/createSlug"
 
@@ -77,27 +75,6 @@ type SaveMediaReviewInput = {
     starRating: number;
     markCompleted?: boolean;
 };
-
-/*
-export async function saveMediaReview(
-    uid: string,
-    mediaId: string,
-    data: SaveMediaReviewInput
-): Promise<void> {
-    const mediaRef = doc(db, "users", uid, "media", mediaId);
-
-    await updateDoc(mediaRef, {
-        reviewProfile: data.reviewProfile,
-        ...(data.production
-            ? { production: data.production }
-            : {}),
-        starRating: data.starRating,
-        reviewScore: data.reviewScore,
-        updatedAt: serverTimestamp(),
-        status: "completed"
-    });
-}
-*/
 
 export async function saveMediaReview(
     uid: string,
@@ -605,4 +582,65 @@ export async function updateTvShowSeriesStatus(
                 : seriesStatus,
         updatedAt: serverTimestamp(),
     });
+}
+
+import type { DashboardStats } from "@/types"
+
+export async function getDashboardStats(uid: string): Promise<DashboardStats> {
+
+    const mediaRef = collection(db, "users", uid, "media")
+    const snapshot = await getDocs(mediaRef)
+
+    const stats: DashboardStats = {
+        total: snapshot.size,
+        inProgress: {
+            total: 0,
+            movies: 0,
+            tvShows: 0,
+            games: 0,
+            books: 0
+        },
+        wishList: {
+            total: 0,
+            movies: 0,
+            tvShows: 0,
+            games: 0,
+            books: 0
+        },
+        completed: {
+            total: 0,
+            movies: 0,
+            tvShows: 0,
+            games: 0,
+            books: 0
+        }
+    }
+
+    snapshot.forEach((doc) => {
+        const media = doc.data() as MediaItemType
+
+        const status = media.status
+        const type = media.type
+
+        if (!(status in stats)) return
+
+        stats[status].total++
+
+        switch (type) {
+            case "movie":
+                stats[status].movies++
+                break
+            case "tvShow":
+                stats[status].tvShows++
+                break
+            case "game":
+                stats[status].games++
+                break
+            case "book":
+                stats[status].books++
+                break
+        }
+    })
+
+    return stats
 }
