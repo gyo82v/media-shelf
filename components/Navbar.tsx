@@ -15,7 +15,7 @@ export default function Navbar({navItems}: {navItems: string[]}) {
                         <li 
                           key={i} 
                           className={`
-                            ${isActive ? "text-red-500" : ""}`}
+                            ${isActive ? "text-teal-600 underline" : ""}`}
                         >
                             <Link href={`/${i}`}>{i}</Link>
                         </li>
