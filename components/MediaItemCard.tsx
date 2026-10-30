@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import {formatStatus, formatType} from "@/lib/media";
 import {formatDate} from "@/lib/formatDate";
+import Button from "./ui/Button";
 
 import { imageMap } from "@/data/imageMap";
 import StarRating from "@/components/StarRating";
@@ -23,6 +24,10 @@ export default function MediaItemCard({ mediaItem }: Props) {
     const handleDelete = () => {
         console.log("Delete item:", mediaItem?.id);
     };
+
+    const handleAddReview = () => {
+        console.log("review added")
+    }
 
     if (!mediaItem) {
         return (
@@ -203,27 +208,30 @@ export default function MediaItemCard({ mediaItem }: Props) {
 
                     {/* Actions */}
                     <div className="mt-6 flex flex-col gap-3 border-t border-neutral-200 pt-6 sm:flex-row dark:border-neutral-800">
-
-                        <button
-                            type="button"
-                            onClick={handleUpdate}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                        
+                        <Button
+                          type="button"
+                          onClick={handleAddReview}
+                        >
+                            Add review
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={handleUpdate}
+                          variant="secondary"
                         >
                             <FiEdit2 size={16} />
                             Update
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={handleDelete}
-                            className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700"
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={handleDelete}
+                          variant="danger"
                         >
                             <FiTrash2 size={16} />
                             Delete
-                        </button>
-
+                        </Button>
                     </div>
-
                 </div>
             </div>
 

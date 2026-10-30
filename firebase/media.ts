@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp, addDoc, deleteField, orderBy, runTransaction } from "firebase/firestore"
+import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp, addDoc, deleteField, orderBy, runTransaction, deleteDoc, writeBatch } from "firebase/firestore"
 import { db } from "./firebase"
 import type { MediaItemType, ReviewScore, GameProduction, MediaReviewProfile, TvShowEpisode, TvShowSeason, TvShowSeriesStatus } from "@/types"
 import type { TvShowReviewProfileKey } from "@/config/tvShowProfile";
@@ -643,4 +643,57 @@ export async function getDashboardStats(uid: string): Promise<DashboardStats> {
     })
 
     return stats
+}
+
+export async function deleteMedia(
+    uid: string,
+    mediaId: string,
+    mediaType: MediaItemType["type"]
+): Promise<void> {
+
+    const mediaRef = doc(db, "users", uid, "media", mediaId)
+
+    // Movies, books and games
+    if (mediaType !== "tvShow") {
+        await deleteDoc(mediaRef)
+        return
+    }
+
+    // TV Shows: retrieve all seasons
+    const seasonsSnapshot = await getDocs(
+        collection(mediaRef, "seasons")
+    )
+
+    const refsToDelete: Array<typeof mediaRef> = []
+
+    // Retrieve episodes and collect all document references
+    for (const seasonDoc of seasonsSnapshot.docs) {
+
+        const episodesSnapshot = await getDocs(
+            collection(seasonDoc.ref, "episodes")
+        )
+
+        // Add episode documents first
+        for (const episodeDoc of episodesSnapshot.docs) {
+            refsToDelete.push(episodeDoc.ref)
+        }
+
+        // Then add the season document
+        refsToDelete.push(seasonDoc.ref)
+    }
+
+    // Delete the TV Show document last
+    refsToDelete.push(mediaRef)
+
+    // Delete in batches of maximum 500 documents
+    for (let i = 0; i < refsToDelete.length; i += 500) {
+
+        const batch = writeBatch(db)
+
+        refsToDelete
+            .slice(i, i + 500)
+            .forEach(ref => batch.delete(ref))
+
+        await batch.commit()
+    }
 }
