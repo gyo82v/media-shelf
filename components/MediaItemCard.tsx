@@ -6,6 +6,13 @@ import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import {formatStatus, formatType} from "@/lib/media";
 import {formatDate} from "@/lib/formatDate";
 import Button from "./ui/Button";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+
+import { useAuth } from "@/providers/AuthProvider"
+import { deleteMedia } from "@/firebase/media"
+
+import Modal from "@/components/modals/Modal"
 
 import { imageMap } from "@/data/imageMap";
 import StarRating from "@/components/StarRating";
@@ -16,14 +23,49 @@ type Props = {
 };
 
 export default function MediaItemCard({ mediaItem }: Props) {
+    const { profile } = useAuth()
+    const router = useRouter()
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [deleteError, setDeleteError] = useState<string | null>(null)
 
     const handleUpdate = () => {
         console.log("Update item:", mediaItem?.id);
     };
 
     const handleDelete = () => {
-        console.log("Delete item:", mediaItem?.id);
-    };
+        if (!mediaItem) return
+
+        setDeleteError(null)
+        setShowDeleteModal(true)
+    }
+
+    const handleConfirmDelete = async () => {
+        if (!mediaItem || isDeleting) return
+
+        if (!profile?.uid) {
+            setDeleteError("Unable to identify your account. Please sign in again.")
+            return
+        }
+
+        setIsDeleting(true)
+        setDeleteError(null)
+
+        try {
+            await deleteMedia(profile.uid, mediaItem.id, mediaItem.type)
+
+            setShowDeleteModal(false)
+            router.replace("/media")
+
+        } catch (err) {
+            console.error("Delete media failed:", err)
+            setDeleteError("Unable to delete this media. Please try again.")
+
+        } finally {
+            setIsDeleting(false)
+        }
+    }
 
     const handleAddReview = () => {
         console.log("review added")
@@ -234,6 +276,76 @@ export default function MediaItemCard({ mediaItem }: Props) {
                     </div>
                 </div>
             </div>
+
+            {showDeleteModal && mediaItem && (
+    <Modal>
+        <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+            className="flex flex-col gap-5"
+        >
+            <div className="flex flex-col gap-2">
+
+                <h2
+                    id="delete-modal-title"
+                    className="text-xl font-bold"
+                >
+                    Delete media?
+                </h2>
+
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                    Are you sure you want to delete{" "}
+                    <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                        {mediaItem.name}
+                    </span>
+                    ?
+                </p>
+
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    This action cannot be undone. All associated media data,
+                    including seasons and episodes for TV Shows, will also be deleted.
+                </p>
+
+            </div>
+
+            {deleteError && (
+                <p
+                    role="alert"
+                    className="text-sm text-red-500"
+                >
+                    {deleteError}
+                </p>
+            )}
+
+            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+
+                <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={isDeleting}
+                    onClick={() => {
+                        setShowDeleteModal(false)
+                        setDeleteError(null)
+                    }}
+                >
+                    Cancel
+                </Button>
+
+                <Button
+                    type="button"
+                    variant="danger"
+                    disabled={isDeleting}
+                    onClick={handleConfirmDelete}
+                >
+                    {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
+
+            </div>
+
+        </div>
+    </Modal>
+)}
 
             {/* Detailed review */}
             <details className="border-t border-neutral-200 dark:border-neutral-800">
