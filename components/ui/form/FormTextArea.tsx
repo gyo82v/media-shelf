@@ -5,9 +5,10 @@ type Props = {
     label: string,
     required?: boolean,
     placeholder?: string,
+    defaultValue?: string
 }
 
-export default function FormTextArea({name, label, required=false, placeholder}:Props){
+export default function FormTextArea({name, label, required=false, placeholder, defaultValue}:Props){
     return(
         <div className={`flex flex-col gap-1 w-full`}>
             <label htmlFor={name} className={`ml-2 text-lg`}>{label}</label>
@@ -17,6 +18,7 @@ export default function FormTextArea({name, label, required=false, placeholder}:
               required={required} 
               placeholder={placeholder}
               className={`${inputBaseStyle}`}
+              defaultValue={defaultValue}
             >
             </textarea>
         </div>

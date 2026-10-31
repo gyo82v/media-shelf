@@ -28,6 +28,7 @@ type SelectRootProps = {
   children: React.ReactNode;
   disabled?: boolean;
   className?: string;
+  defaultValue?: string;
 };
 
 const SelectContext = createContext<SelectContextValue | null>(null);
@@ -48,11 +49,12 @@ export default function SelectRoot({
   children,
   disabled = false,
   className,
+  defaultValue = ""
 }: SelectRootProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue);
   const [open, setOpen] = useState(false);
 
   const closeMenu = useCallback(() => {

@@ -5,10 +5,11 @@ type Props = {
     type?: string,
     required?: boolean,
     label: string,
-    placeholder?: string
+    placeholder?: string,
+    defaultValue?: string | number
 }
 
-export default function Formfield({name, label, type="text", placeholder, required=true}:Props){
+export default function Formfield({name, label, type="text", placeholder, required=true, defaultValue}:Props){
     return(
         <div className={`flex flex-col gap-1 w-full`}>
             <label htmlFor={name} className={`ml-2 text-lg`}>{label}:</label>
@@ -19,6 +20,7 @@ export default function Formfield({name, label, type="text", placeholder, requir
               required={required}
               className={`${inputBaseStyle}`} 
               placeholder={placeholder}
+              defaultValue={defaultValue}
             />
         </div>
     )
