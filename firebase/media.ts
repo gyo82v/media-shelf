@@ -1,6 +1,6 @@
 import { collection, getDocs, query, where, doc, getDoc, updateDoc, serverTimestamp, addDoc, deleteField, orderBy, runTransaction, deleteDoc, writeBatch } from "firebase/firestore"
 import { db } from "./firebase"
-import type { MediaItemType, ReviewScore, GameProduction, MediaReviewProfile, TvShowEpisode, TvShowSeason, TvShowSeriesStatus } from "@/types"
+import type { MediaItemType, ReviewScore, GameProduction, MediaReviewProfile, TvShowEpisode, TvShowSeason, TvShowSeriesStatus, UpdateMediaData} from "@/types"
 import type { TvShowReviewProfileKey } from "@/config/tvShowProfile";
 import {createSlug} from "@/lib/createSlug"
 
@@ -696,4 +696,65 @@ export async function deleteMedia(
 
         await batch.commit()
     }
+}
+
+export async function updateMedia(
+    uid: string,
+    mediaId: string,
+    updatedData: UpdateMediaData
+): Promise<void> {
+
+    const mediaRef = doc(db, "users", uid, "media", mediaId)
+
+    await runTransaction(db, async (transaction) => {
+
+        const mediaSnapshot = await transaction.get(mediaRef)
+
+        if (!mediaSnapshot.exists()) {
+            throw new Error("Media item not found.")
+        }
+
+        const currentMedia = mediaSnapshot.data() as MediaItemType
+
+        const hasStatusChanged = currentMedia.status !== updatedData.status
+        const hasNameChanged = currentMedia.name !== updatedData.name
+
+        const changes = {
+            name: updatedData.name,
+            genre: updatedData.genre,
+            status: updatedData.status,
+
+            country: updatedData.country,
+            year: updatedData.year ?? "",
+            description: updatedData.description,
+            notes: updatedData.notes,
+
+            updatedAt: serverTimestamp(),
+
+            ...(hasNameChanged
+                ? {
+                    slug: `${createSlug(updatedData.name)}-${currentMedia.type}`
+                }
+                : {}),
+
+            ...(hasStatusChanged
+                ? updatedData.status === "wishList"
+                    ? {
+                        startedAt: null,
+                        finishedAt: null
+                    }
+                    : updatedData.status === "inProgress"
+                        ? {
+                            startedAt: currentMedia.startedAt ?? serverTimestamp(),
+                            finishedAt: null
+                        }
+                        : {
+                            startedAt: currentMedia.startedAt ?? serverTimestamp(),
+                            finishedAt: serverTimestamp()
+                        }
+                : {})
+        }
+
+        transaction.update(mediaRef, changes)
+    })
 }
