@@ -177,3 +177,13 @@ export type DashboardStats = {
         books: number
     }
 }
+
+export type UpdateMediaData = {
+    name: string;
+    genre: string;
+    status: MediaItemType["status"];
+    country: string;
+    year: number | null;
+    description: string;
+    notes: string;
+}
