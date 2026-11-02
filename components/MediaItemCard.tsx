@@ -247,29 +247,35 @@ const handleReviewSaved = () => {
                     </div>
 
                     {/* Review total score */}
-                    <div className="mt-6 ">
-                        <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
-                            Review Score
-                        </h2>
+                
+<div className="mt-6">
+    <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">
+        Review Score
+    </h2>
 
-                        {mediaItem.reviewScore?.totalScore !== undefined &&
-                        mediaItem.reviewScore?.totalScore !== null ? (
-                            <div className="mt-2 flex items-center gap-3">
-                              
-                                <StarRating
-                                    rating={mediaItem.reviewScore.totalScore}
-                                />
+    {mediaItem.reviewScore?.totalScore !== undefined &&
+    mediaItem.reviewScore?.totalScore !== null ? (
+        <div className="mt-2 inline-flex flex-col gap-1 rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 dark:border-neutral-800 dark:bg-neutral-900/50">
+            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                Calculated score
+            </span>
 
-                                <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                                    {mediaItem.reviewScore.totalScore}/10
-                                </span>
-                            </div>
-                        ) : (
-                            <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-                                No review yet
-                            </p>
-                        )}
-                    </div>
+            <div className="flex items-baseline gap-1.5">
+                <span className="text-3xl font-semibold tabular-nums text-neutral-900 dark:text-white">
+                    {mediaItem.reviewScore.totalScore}
+                </span>
+
+                <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                    points
+                </span>
+            </div>
+        </div>
+    ) : (
+        <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+            No review yet
+        </p>
+    )}
+</div>
 
                     {/* Actions */}
                     <div className="mt-6 flex flex-col gap-3 border-t border-neutral-200 pt-6 sm:flex-row dark:border-neutral-800">
