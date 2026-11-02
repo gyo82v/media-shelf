@@ -58,6 +58,7 @@ import type {
 type Props = {
     mediaId: string;
     setShowModal: (value: boolean) => void;
+    onReviewSaved?: () => void;
 };
 
 type Step = "setup" | "review";
@@ -68,6 +69,7 @@ type BookCriteria = Partial<Record<BookCriterionKey, number>>;
 export default function ReviewModal({
     mediaId,
     setShowModal,
+    onReviewSaved,
 }: Props) {
     const { profile } = useAuth();
     const uid = profile?.uid;
@@ -337,7 +339,7 @@ export default function ReviewModal({
                 starRating,
                 reviewScore,
             });
-
+            onReviewSaved?.()
             setShowModal(false);
         } finally {
             setSaving(false);
@@ -387,6 +389,7 @@ export default function ReviewModal({
                 reviewScore,
             });
 
+            onReviewSaved?.();
             setShowModal(false);
         } finally {
             setSaving(false);
@@ -435,6 +438,7 @@ export default function ReviewModal({
                 starRating,
                 reviewScore,
             });
+            onReviewSaved?.();
 
             setShowModal(false);
         } finally {
@@ -490,6 +494,7 @@ export default function ReviewModal({
                     : current
             );
 
+            onReviewSaved?.();
             setShowModal(false);
         } finally {
             setSaving(false);

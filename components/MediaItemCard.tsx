@@ -17,6 +17,7 @@ import Modal from "@/components/modals/Modal"
 import { imageMap } from "@/data/imageMap";
 import StarRating from "@/components/StarRating";
 import DetailedReview from "./DetailedReview";
+import UpdateMediaModal from "./modals/UpdateMediaModal"
 
 type Props = {
     mediaItem: MediaItemType | null;
@@ -29,10 +30,22 @@ export default function MediaItemCard({ mediaItem }: Props) {
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState<string | null>(null)
+    const [showUpdateModal, setShowUpdateModal] = useState(false)
 
     const handleUpdate = () => {
-        console.log("Update item:", mediaItem?.id);
-    };
+        if (!mediaItem) return
+        setShowUpdateModal(true)
+    }
+
+    const handleMediaUpdated = (newSlug: string) => {
+        if (!mediaItem) return
+
+        if (newSlug !== mediaItem.slug) {
+            router.replace(`/media/${newSlug}`)
+        } else {
+            router.refresh()
+        }
+    }
 
     const handleDelete = () => {
         if (!mediaItem) return
@@ -345,6 +358,14 @@ export default function MediaItemCard({ mediaItem }: Props) {
 
         </div>
     </Modal>
+)}
+
+{showUpdateModal && mediaItem && (
+    <UpdateMediaModal
+        mediaItem={mediaItem}
+        setShowModal={setShowUpdateModal}
+        onUpdated={handleMediaUpdated}
+    />
 )}
 
             {/* Detailed review */}
