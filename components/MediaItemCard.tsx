@@ -18,6 +18,7 @@ import { imageMap } from "@/data/imageMap";
 import StarRating from "@/components/StarRating";
 import DetailedReview from "./DetailedReview";
 import UpdateMediaModal from "./modals/UpdateMediaModal"
+import ReviewModal from "./modals/ReviewModal";
 
 type Props = {
     mediaItem: MediaItemType | null;
@@ -31,6 +32,7 @@ export default function MediaItemCard({ mediaItem }: Props) {
     const [isDeleting, setIsDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState<string | null>(null)
     const [showUpdateModal, setShowUpdateModal] = useState(false)
+    const [showReviewModal, setShowReviewModal] = useState(false)
 
     const handleUpdate = () => {
         if (!mediaItem) return
@@ -80,9 +82,17 @@ export default function MediaItemCard({ mediaItem }: Props) {
         }
     }
 
-    const handleAddReview = () => {
-        console.log("review added")
-    }
+    const hasDetailedReview = mediaItem?.reviewScore?.totalScore != null
+
+const handleAddReview = () => {
+    if (!mediaItem || hasDetailedReview) return
+
+    setShowReviewModal(true)
+}
+
+const handleReviewSaved = () => {
+    router.refresh()
+}
 
     if (!mediaItem) {
         return (
@@ -267,8 +277,9 @@ export default function MediaItemCard({ mediaItem }: Props) {
                         <Button
                           type="button"
                           onClick={handleAddReview}
+                          disabled={hasDetailedReview}
                         >
-                            Add review
+                            {hasDetailedReview ? "Update Review" : "Add Review"}
                         </Button>
                         <Button
                           type="button"
@@ -365,6 +376,14 @@ export default function MediaItemCard({ mediaItem }: Props) {
         mediaItem={mediaItem}
         setShowModal={setShowUpdateModal}
         onUpdated={handleMediaUpdated}
+    />
+)}
+
+{showReviewModal && mediaItem && (
+    <ReviewModal
+        mediaId={mediaItem.id}
+        setShowModal={setShowReviewModal}
+        onReviewSaved={handleReviewSaved}
     />
 )}
 
