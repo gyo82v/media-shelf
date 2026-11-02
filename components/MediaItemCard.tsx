@@ -33,6 +33,7 @@ export default function MediaItemCard({ mediaItem }: Props) {
     const [deleteError, setDeleteError] = useState<string | null>(null)
     const [showUpdateModal, setShowUpdateModal] = useState(false)
     const [showReviewModal, setShowReviewModal] = useState(false)
+    const hasDetailedReview = mediaItem?.reviewScore?.totalScore != null
 
     const handleUpdate = () => {
         if (!mediaItem) return
@@ -82,10 +83,9 @@ export default function MediaItemCard({ mediaItem }: Props) {
         }
     }
 
-    const hasDetailedReview = mediaItem?.reviewScore?.totalScore != null
 
 const handleAddReview = () => {
-    if (!mediaItem || hasDetailedReview) return
+    if (!mediaItem) return
 
     setShowReviewModal(true)
 }
@@ -277,7 +277,6 @@ const handleReviewSaved = () => {
                         <Button
                           type="button"
                           onClick={handleAddReview}
-                          disabled={hasDetailedReview}
                         >
                             {hasDetailedReview ? "Update Review" : "Add Review"}
                         </Button>
