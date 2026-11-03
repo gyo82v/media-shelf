@@ -1,11 +1,150 @@
+
+"use client"
+
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/providers/AuthProvider"
+import Button from "@/components/ui/Button"
+import { inputBaseStyle } from "@/styles"
+
+export default function SignUpPage() {
+    const { createUser } = useAuth()
+    const router = useRouter()
+
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const formData = new FormData(e.currentTarget)
+        const name = formData.get("name") as string
+        const email = formData.get("email") as string
+        const password = formData.get("password") as string
+
+        try {
+            await createUser(email, password, name)
+            router.replace("/home")
+        } catch (err: unknown) {
+            console.error("failed to create new account", err)
+        }
+    }
+
+    return (
+        <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 sm:px-6">
+
+            <section className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 sm:p-8">
+
+                {/* Heading */}
+                <div className="mb-8 text-center">
+                    <p className="mb-3 text-sm font-semibold tracking-widest uppercase text-neutral-500 dark:text-neutral-400">
+                        Media Shelf
+                    </p>
+
+                    <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
+                        Create your account
+                    </h1>
+
+                    <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+                        Start building your personal media collection.
+                    </p>
+                </div>
+
+                {/* Form */}
+                <form
+                    className="flex flex-col gap-5"
+                    onSubmit={handleSubmit}
+                >
+                    <div className="flex flex-col gap-2">
+                        <label
+                            htmlFor="name"
+                            className="text-sm font-semibold text-neutral-700 dark:text-neutral-200"
+                        >
+                            Your name
+                        </label>
+
+                        <input
+                            name="name"
+                            id="name"
+                            placeholder="Enter your name"
+                            autoComplete="name"
+                            required
+                            className={inputBaseStyle}
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label
+                            htmlFor="email"
+                            className="text-sm font-semibold text-neutral-700 dark:text-neutral-200"
+                        >
+                            Email address
+                        </label>
+
+                        <input
+                            name="email"
+                            id="email"
+                            type="email"
+                            autoComplete="email"
+                            placeholder="example@domain.com"
+                            required
+                            className={inputBaseStyle}
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <label
+                            htmlFor="password"
+                            className="text-sm font-semibold text-neutral-700 dark:text-neutral-200"
+                        >
+                            Password
+                        </label>
+
+                        <input
+                            name="password"
+                            id="password"
+                            type="password"
+                            autoComplete="new-password"
+                            placeholder="Enter your password"
+                            required
+                            className={inputBaseStyle}
+                        />
+                    </div>
+
+                    <div className="pt-2">
+                        <Button type="submit">
+                            Create account
+                        </Button>
+                    </div>
+                </form>
+
+                {/* Footer */}
+                <div className="mt-8 border-t border-neutral-200 pt-6 text-center dark:border-neutral-800">
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                        Already have an account?{" "}
+                        <Link
+                            href="/sign-in"
+                            className="font-semibold text-neutral-900 transition-colors hover:text-neutral-500 dark:text-white dark:hover:text-neutral-300"
+                        >
+                            Sign in
+                        </Link>
+                    </p>
+                </div>
+
+            </section>
+        </main>
+    )
+}
+
+
+/*
+
 "use client"
 
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useAuth} from "@/providers/AuthProvider";
+import Button from "@/components/ui/Button";
+import {inputBaseStyle} from "@/styles";
 
 export default function SignUpPage() {
-    const {createUser, loading} = useAuth()
+    const {createUser} = useAuth()
     const router = useRouter()
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -35,7 +174,7 @@ export default function SignUpPage() {
                       id="name"
                       placeholder="Enter your name"
                       required
-                      className={``}                   
+                      className={`${inputBaseStyle}`}                   
                     />
                 </div>
                 <div className={`flex flex-col gap-2`}>
@@ -47,7 +186,7 @@ export default function SignUpPage() {
                       autoComplete="email"
                       placeholder="example@domain.com"
                       required
-                      className={``}
+                      className={`${inputBaseStyle}`}
                     />
                 </div>
                 <div className={`flex flex-col gap-2`}>
@@ -59,15 +198,12 @@ export default function SignUpPage() {
                       autoComplete="new-password"
                       placeholder="Enter your password"
                       required
-                      className={``}
+                      className={`${inputBaseStyle}`}
                     />
                 </div>
-                <button
-                  type="submit"
-                  className={`bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600`}  
-                >
+                <Button type="submit">
                     Sign up
-                </button>
+                </Button>
             </form>
             <p className="text-sm text-gray-500 mt-4">
                 Already have an account? <Link href="/sign-in">Sign in</Link>
@@ -75,3 +211,7 @@ export default function SignUpPage() {
         </div>
     )
 }
+
+
+
+*/
