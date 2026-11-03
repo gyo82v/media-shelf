@@ -1,7 +1,21 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientProviders from "@/providers/ClientProviders";
+
+export const metadata: Metadata = {
+    title: "Media Shelf",
+    description: "A personal media shelf for tracking movies and TV shows",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "Media Shelf",
+    },
+}
+
+export const viewport: Viewport = {
+    themeColor: "#ffffff",
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,10 +27,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Media Shelf",
-  description: "A media shelf app built with Next.js 13, Firebase, and Tailwind CSS.",
-};
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
