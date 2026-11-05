@@ -19,6 +19,7 @@ import StarRating from "@/components/StarRating";
 import DetailedReview from "./DetailedReview";
 import UpdateMediaModal from "./modals/UpdateMediaModal"
 import ReviewModal from "./modals/ReviewModal";
+import { basePill } from "@/styles/pills";
 
 type Props = {
     mediaItem: MediaItemType | null;
@@ -127,16 +128,16 @@ const handleReviewSaved = () => {
                     <div className="mb-6">
                         <div className="mb-3 flex flex-wrap items-center gap-2">
 
-                            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                            <span className={basePill}>
                                 {formatType(mediaItem.type)}
                             </span>
 
-                            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                            <span className={basePill}>
                                 {formatStatus(mediaItem.status)}
                             </span>
 
                             {mediaItem.type === "game" && (
-                                <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                <span className={basePill}>
                                     {formatProduction(mediaItem.production)}
                                 </span>
                             )}

@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { imageMap } from "@/data/imageMap"
 import StarRating from "./StarRating"
+import {formatProduction} from "@/lib/media"
 
 export default function MediaReviewedItem({ item }: { item: MediaItemType }) {
     const mediaType = item.type === "tvShow"
@@ -48,6 +49,13 @@ export default function MediaReviewedItem({ item }: { item: MediaItemType }) {
                         <span className="shrink-0">{mediaType}</span>
                         <span aria-hidden="true">•</span>
                         <span className="min-w-0 truncate">{item.genre}</span>
+                        {item.type === "game" &&
+                         (item.production === "studio" || item.production === "indie") && (
+                            <>
+                              <span aria-hidden="true">•</span>
+                              <span className="shrink-0">{formatProduction(item.production)}</span>
+                            </>
+                        )}
                     </div>
 
                     {/* Rating and review score */}
