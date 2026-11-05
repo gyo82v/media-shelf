@@ -97,6 +97,7 @@ export async function saveMediaReview(
         starRating: data.starRating,
         reviewScore: data.reviewScore,
         updatedAt: serverTimestamp(),
+        finishedAt: serverTimestamp(),
         ...(data.markCompleted === false
             ? {}
             : { status: "completed" }),
