@@ -1,7 +1,6 @@
 "use client"
 
 import { createContext, useEffect, useState, useContext } from "react"
-import { useLanguageSync } from "@/hooks/useLanguageSync";
 import type { User as FirebaseUser } from "firebase/auth"
 import type {AuthContextValue} from "@/types"
 import type { UserProfile } from "@/types"
@@ -28,7 +27,6 @@ export function AuthProvider({children}:{children: React.ReactNode}){
     const [user, setUser] = useState<FirebaseUser | null>(null)
     const [profile, setProfile] = useState<UserProfile | null>(null)
     const [loading, setLoading] = useState(true)
-    useLanguageSync(profile);
     const { setTheme } = useTheme();
 
     useEffect(() => {

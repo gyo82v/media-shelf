@@ -16,7 +16,7 @@ Media  shelf Implementation list:
 - [✅] {Content} implement the update button;
 - [✅] {Content} implement the add review feature for the media "wishList" and "in-progress";
 - [✅] {Content} implement the detailed review section of completed media items;
-- [Content] [media-details-page] add a badge for "indie" or "studio" games media items;
+- [✅] {Content} add a badge for "indie" or "studio" games media items;
 - [Content] [media-mediaList] add a badge for "indie" or "studio" games media items;
 - [✅] {Content} in the "completed" list add a section with the star rating and the global 
         detailed  review rating;

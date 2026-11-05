@@ -27,3 +27,14 @@ export function formatStatus(status: MediaItemType["status"]){
             return "N/A";
     }
 }
+
+export function formatProduction(production: MediaItemType["production"]){
+    switch (production) {
+        case "studio":
+            return "Studio";
+        case "indie":
+            return "Indie";
+        default:
+            return "N/A";
+    }
+}

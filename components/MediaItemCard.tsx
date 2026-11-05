@@ -3,7 +3,7 @@
 import type { MediaItemType } from "@/types";
 import Image from "next/image";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import {formatStatus, formatType} from "@/lib/media";
+import {formatStatus, formatType, formatProduction} from "@/lib/media";
 import {formatDate} from "@/lib/formatDate";
 import Button from "./ui/Button";
 import { useState } from "react"
@@ -134,6 +134,12 @@ const handleReviewSaved = () => {
                             <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
                                 {formatStatus(mediaItem.status)}
                             </span>
+
+                            {mediaItem.type === "game" && (
+                                <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+                                    {formatProduction(mediaItem.production)}
+                                </span>
+                            )}
 
                         </div>
 
